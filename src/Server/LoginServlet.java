@@ -18,11 +18,11 @@ public class LoginServlet extends HttpServlet {
 		String password = request.getParameter("passwordInput");
 
 		PrintWriter out = response.getWriter();
-//		if (MySQLBridge.msql.authenticate(username, password)) {
+		if (MySQLBridge.msql.authenticate(username, password)) {
 			out.println("{\"isValid\":true}");
-//		} else {
-//			out.println("{\"isValid\":false}");
-//		}
+		} else {
+			out.println("{\"isValid\":false}");
+		}
 		out.close();
 	}
 }

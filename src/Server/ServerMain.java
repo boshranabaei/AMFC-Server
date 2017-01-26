@@ -18,12 +18,12 @@ public class ServerMain {
 		// Resource handler for the web site
 		ResourceHandler resource_handler1 = new ResourceHandler();
 		resource_handler1.setDirectoriesListed(true);
-
+		
 		// Home page to show up
 		resource_handler1.setWelcomeFiles(new String[] { "index.html" });
 
 		// The address of the content(. must be there)
-		resource_handler1.setResourceBase("../AMFC/WebContent/");
+		resource_handler1.setResourceBase("../../AMFC/WebContent/");
 		ContextHandler contextHandler1 = new ContextHandler("/");
 		contextHandler1.setHandler(resource_handler1);
 
@@ -31,13 +31,17 @@ public class ServerMain {
 		ServletContextHandler ServHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
 		// ...Login Servlet
-//		ServHandler.addServlet(LoginServlet.class, "/login");
-		ServHandler.setBaseResource(Resource.newResource("../AMFC/WebContent/"));
+		ServHandler.addServlet(LoginServlet.class, "/login");
+		ServHandler.setBaseResource(Resource.newResource("../../AMFC/WebContent/"));
 
 		// ...Settings Servlet
 		ServHandler.addServlet(SettingsServlet.class, "/settings");
-		ServHandler.setBaseResource(Resource.newResource("../AMFC/WebContent/"));
+		ServHandler.setBaseResource(Resource.newResource("../../AMFC/WebContent/"));
 
+		// ...Applicant Servlet
+		ServHandler.addServlet(SettingsServlet.class, "/applicant");
+		ServHandler.setBaseResource(Resource.newResource("../../AMFC/WebContent/"));
+		
 		// Adding handlers to the server
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { contextHandler1, ServHandler });
