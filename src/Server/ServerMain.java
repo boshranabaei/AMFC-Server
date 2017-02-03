@@ -39,7 +39,7 @@ public class ServerMain {
 		ServHandler.setBaseResource(Resource.newResource("../../AMFC/WebContent/"));
 
 		// ...Applicant Servlet
-		ServHandler.addServlet(SettingsServlet.class, "/applicant");
+		ServHandler.addServlet(ApplicantServlet.class, "/applicant");
 		ServHandler.setBaseResource(Resource.newResource("../../AMFC/WebContent/"));
 		
 		// Adding handlers to the server

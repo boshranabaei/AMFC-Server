@@ -2,9 +2,15 @@ package Server;
 
 public class Applicant {
 	long userId;
-	String firstName; 
+	int gender;
+	int children;
+	int relocate;
+	int smoke;
+	int prefAgeMin;
+	int prefAgeMax;
+	int age;
 	String lastName;
-	char gender;
+	String firstName; 
 	String dateOfBirth;
 	String hasORwantsHijab;
 	String city;
@@ -13,19 +19,13 @@ public class Applicant {
 	String ethnicity;
 	String citizenship;
 	String maritalStatus;
-	int children;
 	String occupation;
 	String occupationComments;
 	String education;
-	Boolean smoke;
-	Boolean relocate;
 	String prefMaritalStatus;
 	String prefEducation;
 	String prefCitizenship;
-	String prefCountry;
 	String prefEthnicity;
-	int prefAgeMin;
-	int prefAgeMax;
 	String homePhoneNumber;
 	String mobilePhoneNumber;
 	String email;
@@ -33,4 +33,5 @@ public class Applicant {
 	String comments;
 	String approvalStatus;
 	String status;
+	String dateAdded;
 }

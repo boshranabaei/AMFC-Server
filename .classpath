@@ -2,8 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/5-Java/AMFC/lib/jetty-all.jar"/>
-	<classpathentry kind="lib" path="C:/5-Java/AMFC/lib/javax.servlet.jar"/>
 	<classpathentry kind="lib" path="C:/5-Java/JettyServer/AMFC-Server/lib/sqlite-jdbc-3.16.1.jar"/>
+	<classpathentry kind="lib" path="C:/5-Java/JettyServer/AMFC-Server/lib/gson-2.6.2.jar"/>
+	<classpathentry kind="lib" path="C:/5-Java/JettyServer/AMFC-Server/lib/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="C:/5-Java/JettyServer/AMFC-Server/lib/jetty-all.jar"/>
+	<classpathentry kind="lib" path="C:/5-Java/JettyServer/AMFC-Server/lib/json-simple-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
