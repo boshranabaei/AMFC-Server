@@ -30,7 +30,7 @@ public class MySQLBridge {
 	}
 
 	//Check the username and password
-	public boolean authenticate(String username, String password) {
+	public synchronized boolean authenticate(String username, String password) {
 		boolean isValid = false;
 		String sql = "SELECT COUNT(*) FROM admins WHERE username = \'" + username + "\' AND password = \'"
 				+ password + "\';";
@@ -96,7 +96,7 @@ public class MySQLBridge {
 		return false;
 	}
 	
-	public Applicant [] getApplicants(){
+	public synchronized Applicant [] getApplicants(){
 		
 		Applicant[] applicants = null;
 		
