@@ -13,16 +13,29 @@ public class LoginServlet extends HttpServlet {
 	public void init() throws ServletException {
 	}
 
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String username = request.getParameter("userIDInput");
 		String password = request.getParameter("passwordInput");
 
 		PrintWriter out = response.getWriter();
+		
+		System.out.println(MySQLBridge.msql.authenticate(username, password));
 		if (MySQLBridge.msql.authenticate(username, password)) {
 			out.println("{\"isValid\":true}");
+			
 		} else {
 			out.println("{\"isValid\":false}");
 		}
 		out.close();
 	}
+	
+	/*
+	 * 
+	 * if (MySQLBridge.msql.authenticate(username, password)) {
+			response.sendRedirect("napp.html");
+		} else {
+			response.sendRedirect("");
+		}
+		*/
+	 
 }
