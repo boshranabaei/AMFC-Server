@@ -83,7 +83,6 @@ public class MySQLBridge {
 		applicant.prefEducation+"\',"+applicant.prefAgeMin+","+applicant.prefAgeMax+",\'"+applicant.pointOfContact
 		+"\',\'"+applicant.comments+"\',\'approved\',\'free\',\'"+dateFormatter.format(calToday.getTime())+"\')";
 		
-		System.out.println(sql);
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if(rowChanged>0)
@@ -114,7 +113,17 @@ public class MySQLBridge {
 				applicants[i].lastName = rs.getString("lastName");
 				applicants[i].dateOfBirth = rs.getString("dateOfBirth");
 				applicants[i].age = calculateAge(applicants[i].dateOfBirth);
-				System.out.println(applicants[i].age);
+				applicants[i].status = rs.getString("status");
+				applicants[i].dateAdded = rs.getString("dateAdded");
+				applicants[i].children = rs.getInt("children");
+				applicants[i].citizenship = rs.getString("citizenship");
+				applicants[i].city = rs.getString("city");
+				applicants[i].comments = rs.getString("comments");
+				applicants[i].country = rs.getString("country");
+				applicants[i].education = rs.getString("education");
+				applicants[i].email = rs.getString("email");
+				applicants[i].ethnicity = rs.getString("ethnicity");
+				applicants[i].gender = rs.getInt("gender");
 				rs.next();
 			}
 			
