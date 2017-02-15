@@ -9,19 +9,21 @@ import java.util.Date;
 
 public class MySQLBridge {
 
+	static final String WIN_URL="jdbc:sqlite:C:/5-Java/JettyServer/AMFC-Server/db/amfc.db";
+	static final String LINUX_URL="jdbc:sqlite:/home/bnabaei/AMFC-Server/db/amfc.db";	
+	
 	static int lastID=1;
 	Connection conn;
 	java.sql.Statement stmt;
 	ResultSet rs;
 	public static MySQLBridge msql = new MySQLBridge();
-	static final String DB_URL = "jdbc:sqlite:C:/5-Java/JettyServer/AMFC-Server/db/amfc.db";
 	//TODO relative address
 
 	
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(DB_URL);
+			conn = DriverManager.getConnection(LINUX_URL);
 			stmt = conn.createStatement();
 		} catch (SQLException e) {
 			System.out.println("NO Connection");
@@ -81,7 +83,7 @@ public class MySQLBridge {
 		applicant.homePhoneNumber+"\',\'"+applicant.city+"\',\'"+applicant.country+"\',\'"+applicant.province
 		+"\',\'"+applicant.country+"\',\'"+applicant.prefMaritalStatus+"\',\'"+applicant.ethnicity+"\',\'"+
 		applicant.prefEducation+"\',"+applicant.prefAgeMin+","+applicant.prefAgeMax+",\'"+applicant.pointOfContact
-		+"\',\'"+applicant.comments+"\',\'approved\',\'free\',\'"+dateFormatter.format(calToday.getTime())+"\')";
+		+"\',\'"+applicant.prefComments+"\',\'approved\',\'free\',\'"+dateFormatter.format(calToday.getTime())+"\')";
 		
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
@@ -118,7 +120,7 @@ public class MySQLBridge {
 				applicants[i].children = rs.getInt("children");
 				applicants[i].citizenship = rs.getString("citizenship");
 				applicants[i].city = rs.getString("city");
-				applicants[i].comments = rs.getString("comments");
+				applicants[i].prefComments = rs.getString("prefComments");
 				applicants[i].country = rs.getString("country");
 				applicants[i].education = rs.getString("education");
 				applicants[i].email = rs.getString("email");
@@ -159,42 +161,7 @@ public class MySQLBridge {
 //conn = DriverManager.getConnection(DB_URL, USER, PASS);
 //String sql = "CREATE DATABASE AMFC";
 //stmt.executeUpdate(sql);
-//sql = "CREATE TABLE admins (username VARCHAR(255), password VARCHAR(255), firstName VARCHAR(255), lastName VARCHAR(255), email VARCHAR(255), phoneNumber VARCHAR(255))";
-/*	
-CREATE TABLE applicants (	
-userId LONG,
-firstName VARCHAR(255), 
-lastName VARCHAR(255),
-dateOfBirth DATE,
-gender VARCHAR(1),
-maritalStatus VARCHAR(100),
-children INTEGER,
-ethnicity VARCHAR(100),
-citizenship VARCHAR(100),
-relocate INTEGER,
-hasORwantsHijab VARCHAR(100),
-smoke INTEGER,
-education VARCHAR(100),
-occupation VARCHAR(255),
-occupationComments VARCHAR(800),
-email VARCHAR(255),
-mobilePhoneNumber  VARCHAR(100),
-homePhoneNumber  VARCHAR(100),
-city VARCHAR(100),
-province VARCHAR(100),
-country VARCHAR(100),
-prefMaritalStatus VARCHAR(100),
-prefEthnicity VARCHAR(100),
-prefEducation VARCHAR(100),
-prefCountry VARCHAR(100),
-prefAgeMin INTEGER,
-prefAgeMax INTEGER,
-pointOfContact VARCHAR(100),
-comments VARCHAR(1000),
-approvalStatus VARCHAR(10),
-status VARCHAR(10),
-dateAdded VARCHAR(10));
-*/	
+//sql = "CREATE TABLE admins (username VARCHAR(255), password VARCHAR(255), firstName VARCHAR(255), lastName VARCHAR(255), email VARCHAR(255), phoneNumber VARCHAR(255))";	
 
 //stmt.executeUpdate(sql);
 //
