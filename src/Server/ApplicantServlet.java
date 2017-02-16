@@ -22,10 +22,11 @@ public class ApplicantServlet extends HttpServlet {
 		Gson gson = new GsonBuilder().create();
 		System.out.println(task);
 		PrintWriter out = response.getWriter();
-		
+		System.out.println(task);
 		if( task.equals("newApplicant")){
 			String jsonString = request.getParameter("applicant");
-			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);			
+			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
+			System.out.println(newApplicant.firstName);
 			if(MySQLBridge.msql.addApplicant(newApplicant)){
 				out.println("{\"mission\":\"accomplished\"}");
 			}

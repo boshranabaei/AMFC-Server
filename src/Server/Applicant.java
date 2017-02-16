@@ -31,6 +31,7 @@ public class Applicant {
 	String prefEthnicity;
 	String prefEducation;
 	String prefComments;
+	String prefCountry;
 	String amfcPointOfContact;
 	String approvalStatus;
 	String status;
