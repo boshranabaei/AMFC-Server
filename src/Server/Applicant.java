@@ -17,7 +17,7 @@ public class Applicant {
 	String relocateWhere;
 	String education;
 	String occupation;
-	String occupationComments;
+	String comments;
 	String email;
 	String mobilePhoneNumber;
 	String homePhoneNumber;
@@ -55,7 +55,7 @@ relocate INTEGER,
 relocateWhere VARCHAR(100),
 education VARCHAR(100),
 occupation VARCHAR(255),
-occupationComments VARCHAR(800),
+comments VARCHAR(800),
 email VARCHAR(255),
 mobilePhoneNumber  VARCHAR(100),
 homePhoneNumber  VARCHAR(100),

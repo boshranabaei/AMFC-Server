@@ -76,17 +76,19 @@ public class MySQLBridge {
 
 		// TODO get from db
 		lastID++;
-
+		
+		replaceQuotes(applicant);
+		
 		String sql = "INSERT INTO applicants VALUES(" + lastID + ",\'" + applicant.firstName + "\',\'"
 				+ applicant.lastName + "\',\'" + applicant.dateOfBirth + "\'," + applicant.gender + ",\'"
 				+ applicant.ethnicity + "\',\'" + applicant.citizenship + "\',\'" + applicant.maritalStatus + "\',"
 				+ applicant.children + "," + applicant.smoke + ",\'" + applicant.hasORwantsHijab + "\',"
 				+ applicant.relocate + ",\'" + applicant.relocateWhere + "\',\'" + applicant.education + "\',\'"
-				+ applicant.occupation + "\',\'" + applicant.occupationComments + "\',\'" + applicant.email + "\',\'"
+				+ applicant.occupation + "\',\'" + applicant.comments + "\',\'" + applicant.email + "\',\'"
 				+ applicant.mobilePhoneNumber + "\',\'" + applicant.homePhoneNumber + "\',\'" + applicant.pointOfContact
 				+ "\',\'" + applicant.city + "\',\'" + applicant.province + "\',\'" + applicant.country + "\',\'"
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
-				+ applicant.ethnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry + "\',\'"
+				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry + "\',\'"
 				+ applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'free\',\'"
 				+ dateFormatter.format(calToday.getTime()) + "\')";
 
@@ -157,6 +159,27 @@ public class MySQLBridge {
 		calBirth.setTime(birthdate);
 		age = calToday.get(Calendar.YEAR) - (calBirth.get(Calendar.YEAR));
 		return age;
+	}
+	
+	void replaceQuotes(Applicant applicant){
+
+		applicant.firstName = applicant.firstName.replace("\"", " ").replace("\'", " "); 
+		applicant.lastName  = applicant.lastName.replace("\"", " ").replace("\'", " ");
+		applicant.ethnicity  = applicant.ethnicity.replace("\"", " ").replace("\'", " ");
+		applicant.citizenship  = applicant.citizenship.replace("\"", " ").replace("\'", " ");
+		applicant.relocateWhere  = applicant.relocateWhere.replace("\"", " ").replace("\'", " ");
+		applicant.occupation  = applicant.occupation.replace("\"", " ").replace("\'", " ");
+		applicant.comments  = applicant.comments.replace("\"", " ").replace("\'", " ");
+		applicant.email  = applicant.email.replace("\"", " ").replace("\'", " ");
+		applicant.pointOfContact  = applicant.pointOfContact.replace("\"", " ").replace("\'", " ");
+		applicant.city  = applicant.city.replace("\"", " ").replace("\'", " ");
+		applicant.province  = applicant.province.replace("\"", " ").replace("\'", " ");
+		applicant.country  = applicant.country.replace("\"", " ").replace("\'", " ");
+		applicant.prefEthnicity   = applicant.prefEthnicity.replace("\"", " ").replace("\'", " ");
+		applicant.prefCountry  = applicant.prefCountry.replace("\"", " ").replace("\'", " ");
+		applicant.prefComments   = applicant.prefComments.replace("\"", " ").replace("\'", " ");
+		applicant.amfcPointOfContact  = applicant.amfcPointOfContact.replace("\"", " ").replace("\'", " ");
+		
 	}
 
 }
