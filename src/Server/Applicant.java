@@ -5,7 +5,7 @@ public class Applicant {
 	int age;
 	String lastName;
 	String firstName; 
-	String dateOfBirth;
+	String birthYear;
 	int gender;
 	String ethnicity;
 	String citizenship;
@@ -43,7 +43,7 @@ CREATE TABLE applicants (
 userId LONG,
 firstName VARCHAR(255), 
 lastName VARCHAR(255),
-dateOfBirth DATE,
+birthYear VARCHAR(10),
 gender VARCHAR(1),
 ethnicity VARCHAR(100),
 citizenship VARCHAR(100),

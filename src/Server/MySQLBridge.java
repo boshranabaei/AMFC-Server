@@ -12,7 +12,7 @@ public class MySQLBridge {
 	static final String WIN_URL = "jdbc:sqlite:C:/5-Java/JettyServer/AMFC-Server/db/amfc.db";
 	static final String LINUX_URL = "jdbc:sqlite:/home/bnabaei/AMFC-Server/db/amfc.db";
 
-	static int lastID = 1;
+	static int userID = 1;
 	Connection conn;
 	java.sql.Statement stmt;
 	ResultSet rs;
@@ -24,6 +24,8 @@ public class MySQLBridge {
 		try {
 			conn = DriverManager.getConnection(WIN_URL);
 			stmt = conn.createStatement();
+			setUserId();
+			System.out.println(userID+"****");
 		} catch (SQLException e) {
 			System.out.println("NO Connection");
 		}
@@ -68,19 +70,16 @@ public class MySQLBridge {
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar calToday = Calendar.getInstance();
 
-		applicant.age = calculateAge(applicant.dateOfBirth);
+		applicant.age = calculateAge(applicant.birthYear);
 		if(applicant.prefAgeMax!=0)
 			applicant.prefAgeMax = Math.abs(applicant.age - applicant.prefAgeMax);
 		if(applicant.prefAgeMin!=0)
 		applicant.prefAgeMin = Math.abs(applicant.age - applicant.prefAgeMin);
 
-		// TODO get from db
-		lastID++;
+		userID++;
 		
-		replaceQuotes(applicant);
-		
-		String sql = "INSERT INTO applicants VALUES(" + lastID + ",\'" + applicant.firstName + "\',\'"
-				+ applicant.lastName + "\',\'" + applicant.dateOfBirth + "\'," + applicant.gender + ",\'"
+		String sql = "INSERT INTO applicants VALUES(" + userID + ",\'" + applicant.firstName + "\',\'"
+				+ applicant.lastName + "\',\'" + applicant.birthYear + "\'," + applicant.gender + ",\'"
 				+ applicant.ethnicity + "\',\'" + applicant.citizenship + "\',\'" + applicant.maritalStatus + "\',"
 				+ applicant.children + "," + applicant.smoke + ",\'" + applicant.hasORwantsHijab + "\',"
 				+ applicant.relocate + ",\'" + applicant.relocateWhere + "\',\'" + applicant.education + "\',\'"
@@ -122,8 +121,8 @@ public class MySQLBridge {
 				applicants[i] = new Applicant();
 				applicants[i].firstName = rs.getString("firstName");
 				applicants[i].lastName = rs.getString("lastName");
-				applicants[i].dateOfBirth = rs.getString("dateOfBirth");
-				applicants[i].age = calculateAge(applicants[i].dateOfBirth);
+				applicants[i].birthYear = rs.getString("birthYear");
+				applicants[i].age = calculateAge(applicants[i].birthYear);
 				applicants[i].status = rs.getString("status");
 				applicants[i].dateAdded = rs.getString("dateAdded");
 				applicants[i].children = rs.getInt("children");
@@ -145,9 +144,23 @@ public class MySQLBridge {
 		return applicants;
 	}
 
+	public synchronized void setUserId() {
+
+		try {
+			String sql = "SELECT max(userId) FROM applicants;";
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			userID = rs.getInt("max(userId)");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
 	int calculateAge(String dateOfBirth) {
 		int age = 0;
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy");
 		Calendar calToday = Calendar.getInstance();
 		Calendar calBirth = Calendar.getInstance();
 		Date birthdate = null;
@@ -159,27 +172,6 @@ public class MySQLBridge {
 		calBirth.setTime(birthdate);
 		age = calToday.get(Calendar.YEAR) - (calBirth.get(Calendar.YEAR));
 		return age;
-	}
-	
-	void replaceQuotes(Applicant applicant){
-
-		applicant.firstName = applicant.firstName.replace("\"", " ").replace("\'", " "); 
-		applicant.lastName  = applicant.lastName.replace("\"", " ").replace("\'", " ");
-		applicant.ethnicity  = applicant.ethnicity.replace("\"", " ").replace("\'", " ");
-		applicant.citizenship  = applicant.citizenship.replace("\"", " ").replace("\'", " ");
-		applicant.relocateWhere  = applicant.relocateWhere.replace("\"", " ").replace("\'", " ");
-		applicant.occupation  = applicant.occupation.replace("\"", " ").replace("\'", " ");
-		applicant.comments  = applicant.comments.replace("\"", " ").replace("\'", " ");
-		applicant.email  = applicant.email.replace("\"", " ").replace("\'", " ");
-		applicant.pointOfContact  = applicant.pointOfContact.replace("\"", " ").replace("\'", " ");
-		applicant.city  = applicant.city.replace("\"", " ").replace("\'", " ");
-		applicant.province  = applicant.province.replace("\"", " ").replace("\'", " ");
-		applicant.country  = applicant.country.replace("\"", " ").replace("\'", " ");
-		applicant.prefEthnicity   = applicant.prefEthnicity.replace("\"", " ").replace("\'", " ");
-		applicant.prefCountry  = applicant.prefCountry.replace("\"", " ").replace("\'", " ");
-		applicant.prefComments   = applicant.prefComments.replace("\"", " ").replace("\'", " ");
-		applicant.amfcPointOfContact  = applicant.amfcPointOfContact.replace("\"", " ").replace("\'", " ");
-		
 	}
 
 }
