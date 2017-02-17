@@ -25,7 +25,6 @@ public class MySQLBridge {
 			conn = DriverManager.getConnection(WIN_URL);
 			stmt = conn.createStatement();
 			setUserId();
-			System.out.println(userID+"****");
 		} catch (SQLException e) {
 			System.out.println("NO Connection");
 		}
@@ -90,8 +89,6 @@ public class MySQLBridge {
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry + "\',\'"
 				+ applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'free\',\'"
 				+ dateFormatter.format(calToday.getTime()) + "\')";
-
-		System.out.println(sql);
 
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
