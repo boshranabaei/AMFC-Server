@@ -22,11 +22,10 @@ public class ApplicantServlet extends HttpServlet {
 		Gson gson = new GsonBuilder().create();
 		System.out.println(task);
 		PrintWriter out = response.getWriter();
-		System.out.println(task);
+//		System.out.println(task);
 		if( task.equals("newApplicant")){
 			String jsonString = request.getParameter("applicant");
 			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
-			System.out.println(newApplicant.firstName);
 			if(MySQLBridge.msql.addApplicant(newApplicant)){
 				out.println("{\"mission\":\"accomplished\"}");
 			}
@@ -38,12 +37,24 @@ public class ApplicantServlet extends HttpServlet {
 			Applicant [] allApplicants = MySQLBridge.msql.getApplicants();
 			out.println("{\"applicants\":"+gson.toJson(allApplicants)+"}");
 		}
-		else if(task.equals("matchApplicantPage")){
+		else if(task.equals("selectApplicant")){
 			ServerMain.chosenApplicants.put("...", MySQLBridge.msql.getApplicantById(Integer.parseInt(request.getParameter("userId"))));
 			out.println("{\"mission\":\"accomplished\"}");
 		}
-		else if(task.equals("matchApplicant")){
+		else if(task.equals("getSelectedApplicant")){
 			out.println("{\"applicant\":"+gson.toJson(ServerMain.chosenApplicants.get("..."))+"}");
+			System.out.println(ServerMain.chosenApplicants.size());
+		}
+		else if(task.equals("updateApplicant")){
+			String jsonString = request.getParameter("applicant");
+			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
+			System.out.println(newApplicant.firstName);
+			if(MySQLBridge.msql.updateApplicant(newApplicant)){
+				out.println("{\"mission\":\"accomplished\"}");
+			}
+			else{
+				out.println("{\"mission\":\"unsuccessful\"}");
+			}
 		}
 		out.close();
 	}

@@ -125,6 +125,7 @@ public class MySQLBridge {
 				applicants[i].lastName = rs.getString("lastName");
 				applicants[i].birthYear = rs.getString("birthYear");
 				applicants[i].gender = rs.getInt("gender");
+				applicants[i].hasORwantsHijab=rs.getString("hasORwantsHijab");
 				applicants[i].age = calculateAge(applicants[i].birthYear);
 				applicants[i].citizenship = rs.getString("citizenship");
 				applicants[i].ethnicity = rs.getString("ethnicity");
@@ -175,6 +176,7 @@ public class MySQLBridge {
 			applicant.age = calculateAge(applicant.birthYear);
 			applicant.citizenship = rs.getString("citizenship");
 			applicant.ethnicity = rs.getString("ethnicity");
+			applicant.hasORwantsHijab=rs.getString("hasORwantsHijab");
 			applicant.maritalStatus = rs.getString("maritalStatus");
 			applicant.children = rs.getInt("children");
 			applicant.city = rs.getString("city");
@@ -204,6 +206,52 @@ public class MySQLBridge {
 		return applicant;
 	}
 
+	public synchronized boolean updateApplicant(Applicant applicant) {
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calToday = Calendar.getInstance();
+
+		applicant.age = calculateAge(applicant.birthYear);
+		if (applicant.prefAgeMax != 0)
+			applicant.prefAgeMax = Math.abs(applicant.age - applicant.prefAgeMax);
+		if (applicant.prefAgeMin != 0)
+			applicant.prefAgeMin = Math.abs(applicant.age - applicant.prefAgeMin);
+		if (applicant.gender == 0) {
+			applicant.prefAgeMin = -applicant.prefAgeMin;
+			applicant.prefAgeMax = -applicant.prefAgeMax;
+		}
+
+		String sql = "DELETE FROM applicants WHERE userId=="+applicant.userId+";";
+		try {
+			stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		sql = "INSERT INTO applicants VALUES(" + applicant.userId + ",\'" + applicant.firstName + "\',\'"
+				+ applicant.lastName + "\',\'" + applicant.birthYear + "\'," + applicant.gender + ",\'"
+				+ applicant.ethnicity + "\',\'" + applicant.citizenship + "\',\'" + applicant.maritalStatus + "\',"
+				+ applicant.children + "," + applicant.smoke + ",\'" + applicant.hasORwantsHijab + "\',"
+				+ applicant.relocate + ",\'" + applicant.relocateWhere + "\',\'" + applicant.education + "\',\'"
+				+ applicant.occupation + "\',\'" + applicant.comments + "\',\'" + applicant.email + "\',\'"
+				+ applicant.mobilePhoneNumber + "\',\'" + applicant.homePhoneNumber + "\',\'" + applicant.pointOfContact
+				+ "\',\'" + applicant.city + "\',\'" + applicant.province + "\',\'" + applicant.country + "\',\'"
+				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
+				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
+				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
+				+ "\',\'approved\',\'"+applicant.status+"\',\'" + applicant.dateAdded + "\')";
+
+		try {
+			int rowChanged = stmt.executeUpdate(sql);
+			if (rowChanged > 0)
+				return true;
+			else
+				return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public synchronized void setUserId() {
 
 		try {
@@ -235,6 +283,8 @@ public class MySQLBridge {
 	}
 
 }
+
+
 
 // try {
 // System.out.println("Creating the database...");
