@@ -1,5 +1,8 @@
 package Server;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -12,6 +15,7 @@ public class ServerMain {
 
 	static String WIN_ADRESS="../../AMFC/WebContent/";
 	static String LINUX_ADRESS="../AMFC/AMFC/WebContent/";		
+	static Map<String,Applicant> chosenApplicants = new HashMap<>();
 	
 	public static void main(String[] args) throws Exception {
 		

@@ -70,13 +70,17 @@ public class MySQLBridge {
 		Calendar calToday = Calendar.getInstance();
 
 		applicant.age = calculateAge(applicant.birthYear);
-		if(applicant.prefAgeMax!=0)
+		if (applicant.prefAgeMax != 0)
 			applicant.prefAgeMax = Math.abs(applicant.age - applicant.prefAgeMax);
-		if(applicant.prefAgeMin!=0)
-		applicant.prefAgeMin = Math.abs(applicant.age - applicant.prefAgeMin);
+		if (applicant.prefAgeMin != 0)
+			applicant.prefAgeMin = Math.abs(applicant.age - applicant.prefAgeMin);
+		if (applicant.gender == 0) {
+			applicant.prefAgeMin = -applicant.prefAgeMin;
+			applicant.prefAgeMax = -applicant.prefAgeMax;
+		}
 
 		userID++;
-		
+
 		String sql = "INSERT INTO applicants VALUES(" + userID + ",\'" + applicant.firstName + "\',\'"
 				+ applicant.lastName + "\',\'" + applicant.birthYear + "\'," + applicant.gender + ",\'"
 				+ applicant.ethnicity + "\',\'" + applicant.citizenship + "\',\'" + applicant.maritalStatus + "\',"
@@ -86,9 +90,9 @@ public class MySQLBridge {
 				+ applicant.mobilePhoneNumber + "\',\'" + applicant.homePhoneNumber + "\',\'" + applicant.pointOfContact
 				+ "\',\'" + applicant.city + "\',\'" + applicant.province + "\',\'" + applicant.country + "\',\'"
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
-				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry + "\',\'"
-				+ applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'free\',\'"
-				+ dateFormatter.format(calToday.getTime()) + "\')";
+				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
+				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
+				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\')";
 
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
@@ -116,21 +120,34 @@ public class MySQLBridge {
 			rs.next();
 			for (int i = 0; i < applicants.length; i++) {
 				applicants[i] = new Applicant();
+				applicants[i].userId = rs.getInt("userId");
 				applicants[i].firstName = rs.getString("firstName");
 				applicants[i].lastName = rs.getString("lastName");
 				applicants[i].birthYear = rs.getString("birthYear");
+				applicants[i].gender = rs.getInt("gender");
 				applicants[i].age = calculateAge(applicants[i].birthYear);
-				applicants[i].status = rs.getString("status");
-				applicants[i].dateAdded = rs.getString("dateAdded");
-				applicants[i].children = rs.getInt("children");
 				applicants[i].citizenship = rs.getString("citizenship");
+				applicants[i].ethnicity = rs.getString("ethnicity");
+				applicants[i].maritalStatus = rs.getString("maritalStatus");
+				applicants[i].children = rs.getInt("children");
 				applicants[i].city = rs.getString("city");
-				applicants[i].prefComments = rs.getString("prefComments");
+				applicants[i].province = rs.getString("province");
 				applicants[i].country = rs.getString("country");
 				applicants[i].education = rs.getString("education");
+				applicants[i].occupation = rs.getString("occupation");
+				applicants[i].comments = rs.getString("comments");
+				applicants[i].prefMaritalStatus = rs.getString("prefMaritalStatus");
+				applicants[i].prefAgeMax = rs.getInt("prefAgeMax");
+				applicants[i].prefAgeMin = rs.getInt("prefAgeMin");
+				applicants[i].prefEthnicity = rs.getString("prefEthnicity");
+				applicants[i].prefEducation = rs.getString("prefEducation");
+				applicants[i].prefCountry = rs.getString("prefCountry");
+				applicants[i].prefComments = rs.getString("prefComments");
 				applicants[i].email = rs.getString("email");
-				applicants[i].ethnicity = rs.getString("ethnicity");
-				applicants[i].gender = rs.getInt("gender");
+				applicants[i].dateAdded = rs.getString("dateAdded");
+				applicants[i].status = rs.getString("status");
+				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
+
 				rs.next();
 			}
 
@@ -139,6 +156,52 @@ public class MySQLBridge {
 		}
 
 		return applicants;
+	}
+
+	public synchronized Applicant getApplicantById(int userId) {
+
+		Applicant applicant = null;
+
+		try {
+			String sql = "SELECT * FROM applicants where userId==" + userId + ";";
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			applicant = new Applicant();
+			applicant.userId = rs.getInt("userId");
+			applicant.firstName = rs.getString("firstName");
+			applicant.lastName = rs.getString("lastName");
+			applicant.birthYear = rs.getString("birthYear");
+			applicant.gender = rs.getInt("gender");
+			applicant.age = calculateAge(applicant.birthYear);
+			applicant.citizenship = rs.getString("citizenship");
+			applicant.ethnicity = rs.getString("ethnicity");
+			applicant.maritalStatus = rs.getString("maritalStatus");
+			applicant.children = rs.getInt("children");
+			applicant.city = rs.getString("city");
+			applicant.province = rs.getString("province");
+			applicant.country = rs.getString("country");
+			applicant.education = rs.getString("education");
+			applicant.occupation = rs.getString("occupation");
+			applicant.comments = rs.getString("comments");
+			applicant.prefMaritalStatus = rs.getString("prefMaritalStatus");
+			applicant.prefAgeMax = rs.getInt("prefAgeMax");
+			applicant.prefAgeMin = rs.getInt("prefAgeMin");
+			applicant.prefEthnicity = rs.getString("prefEthnicity");
+			applicant.prefEducation = rs.getString("prefEducation");
+			applicant.prefCountry = rs.getString("prefCountry");
+			applicant.prefComments = rs.getString("prefComments");
+			applicant.email = rs.getString("email");
+			applicant.dateAdded = rs.getString("dateAdded");
+			applicant.status = rs.getString("status");
+			applicant.amfcPointOfContact = rs.getString("amfcPointOfContact");
+
+		} catch (
+
+		SQLException e) {
+			e.printStackTrace();
+		}
+
+		return applicant;
 	}
 
 	public synchronized void setUserId() {
@@ -154,7 +217,7 @@ public class MySQLBridge {
 		}
 
 	}
-	
+
 	int calculateAge(String dateOfBirth) {
 		int age = 0;
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy");

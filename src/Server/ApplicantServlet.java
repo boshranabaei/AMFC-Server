@@ -38,6 +38,13 @@ public class ApplicantServlet extends HttpServlet {
 			Applicant [] allApplicants = MySQLBridge.msql.getApplicants();
 			out.println("{\"applicants\":"+gson.toJson(allApplicants)+"}");
 		}
+		else if(task.equals("matchApplicantPage")){
+			ServerMain.chosenApplicants.put("...", MySQLBridge.msql.getApplicantById(Integer.parseInt(request.getParameter("userId"))));
+			out.println("{\"mission\":\"accomplished\"}");
+		}
+		else if(task.equals("matchApplicant")){
+			out.println("{\"applicant\":"+gson.toJson(ServerMain.chosenApplicants.get("..."))+"}");
+		}
 		out.close();
 	}
 }
