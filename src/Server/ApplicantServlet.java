@@ -20,9 +20,8 @@ public class ApplicantServlet extends HttpServlet {
 		
 		String task = request.getParameter("task");
 		Gson gson = new GsonBuilder().create();
-		System.out.println(task);
 		PrintWriter out = response.getWriter();
-//		System.out.println(task);
+		System.out.println(task);
 		if( task.equals("newApplicant")){
 			String jsonString = request.getParameter("applicant");
 			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
@@ -43,7 +42,6 @@ public class ApplicantServlet extends HttpServlet {
 		}
 		else if(task.equals("getSelectedApplicant")){
 			out.println("{\"applicant\":"+gson.toJson(ServerMain.chosenApplicants.get("..."))+"}");
-			System.out.println(ServerMain.chosenApplicants.size());
 		}
 		else if(task.equals("updateApplicant")){
 			String jsonString = request.getParameter("applicant");
@@ -66,6 +64,25 @@ public class ApplicantServlet extends HttpServlet {
 			int gender = Integer.parseInt(request.getParameter("gender"));
 			Applicant [] candidates = MySQLBridge.msql.getCandidates(gender);
 			out.println("{\"candidates\":"+gson.toJson(candidates)+"}");
+		}
+		else if(task.equals("updatePairingStatus")){
+			int MUserId = Integer.parseInt(request.getParameter("MUserId"));
+			int FUserId = Integer.parseInt(request.getParameter("FUserId"));
+			String pairingStatus = request.getParameter("pairingStatus");
+				
+			if(MySQLBridge.msql.updatePairingStatus(MUserId,FUserId,pairingStatus))
+				out.println("{\"mission\":\"accomplished\"}");
+			else
+				out.println("{\"mission\":\"unsuccessful\"}");
+		}
+		else if(task.equals("addPairing")){
+			int MUserId = Integer.parseInt(request.getParameter("MUserId"));
+			int FUserId = Integer.parseInt(request.getParameter("FUserId"));
+			String director = request.getParameter("director");
+			if(MySQLBridge.msql.addPairing(MUserId,FUserId,director))
+				out.println("{\"mission\":\"accomplished\"}");
+			else
+				out.println("{\"mission\":\"unsuccessful\"}");
 		}
 		out.close();
 	}

@@ -252,21 +252,30 @@ public class MySQLBridge {
 	public synchronized Pairing[] getPairingsById(long userId, int gender) {
 		Pairing[] pairings = null;
 		try {
-			String sql = "SELECT COUNT(*) , * FROM pairings where ";
-			if(gender==0)
-				sql+="MUserId=="+userId+";";
+			
+			String sql = "SELECT COUNT(*) FROM pairings where ";
+			if (gender == 0)
+				sql += "MUserId==" + userId + ";";
 			else
-				sql+="FUserId=="+userId+";";
-			rs = stmt.executeQuery(sql); 
+				sql += "FUserId==" + userId + ";";
+			rs = stmt.executeQuery(sql);
 			pairings = new Pairing[rs.getInt("COUNT(*)")];
+			
+			sql = "SELECT * FROM pairings where ";
+			if (gender == 0)
+				sql += "MUserId==" + userId + ";";
+			else
+				sql += "FUserId==" + userId + ";";
+			rs = stmt.executeQuery(sql);
+			System.out.println(sql);
 			rs.next();
 			for (int i = 0; i < pairings.length; i++) {
-				pairings[i]= new Pairing();
+				pairings[i] = new Pairing();
 				pairings[i].MUserId = rs.getInt("MUserId");
 				pairings[i].FUserId = rs.getInt("FUserId");
 				pairings[i].director = rs.getString("director");
-				pairings[i].pairingStatus=rs.getString("pairingStatus");
-				pairings[i].pairingDate=rs.getString("pairingDate");
+				pairings[i].pairingStatus = rs.getString("pairingStatus");
+				pairings[i].pairingDate = rs.getString("pairingDate");
 				rs.next();
 			}
 
@@ -277,14 +286,14 @@ public class MySQLBridge {
 		return pairings;
 	}
 
-	public synchronized Applicant [] getCandidates(int gender){
-		Applicant [] candidates = null;
+	public synchronized Applicant[] getCandidates(int gender) {
+		Applicant[] candidates = null;
 		try {
-			String sql = "SELECT COUNT(*) FROM applicants WHERE gender !="+gender+";";
+			String sql = "SELECT COUNT(*) FROM applicants WHERE gender !=" + gender + ";";
 			rs = stmt.executeQuery(sql);
 			candidates = new Applicant[rs.getInt("COUNT(*)")];
 
-			sql = "SELECT * FROM applicants WHERE gender !="+gender+";";
+			sql = "SELECT * FROM applicants WHERE gender !=" + gender + ";";
 			rs = stmt.executeQuery(sql);
 			rs.next();
 			for (int i = 0; i < candidates.length; i++) {
@@ -327,8 +336,43 @@ public class MySQLBridge {
 
 		return candidates;
 	}
-	public synchronized void setUserId() {
 
+	public synchronized boolean addPairing(int MUserId, int FUserId, String director) {
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calToday = Calendar.getInstance();
+
+		try {
+			String sql = "INSERT INTO pairings VALUES("+ MUserId + ","+ FUserId +",\""+director+"\",\"on going\",\""+
+					dateFormatter.format(calToday.getTime())+"\");";
+			int rowChanged = stmt.executeUpdate(sql);
+			if (rowChanged > 0)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public synchronized boolean updatePairingStatus(int MUserId, int FUserId, String pairingStatus) {
+		try {
+			String sql = "UPDATE pairings SET pairingStatus=\"" + pairingStatus + "\" WHERE " + "MUserId==" + MUserId
+					+ " AND FUserId==" + FUserId + ";";
+			int rowChanged = stmt.executeUpdate(sql);
+			if (rowChanged > 0)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public synchronized void setUserId() {
 		try {
 			String sql = "SELECT max(userId) FROM applicants;";
 			rs = stmt.executeQuery(sql);
@@ -338,7 +382,6 @@ public class MySQLBridge {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	int calculateAge(String dateOfBirth) {
@@ -374,6 +417,7 @@ public class MySQLBridge {
 // e1.printStackTrace();
 // }
 // try {
+
 // stmt = conn.createStatement();
 // } catch (SQLException e) {
 // e.printStackTrace();
