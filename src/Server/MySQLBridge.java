@@ -267,7 +267,6 @@ public class MySQLBridge {
 			else
 				sql += "FUserId==" + userId + ";";
 			rs = stmt.executeQuery(sql);
-			System.out.println(sql);
 			rs.next();
 			for (int i = 0; i < pairings.length; i++) {
 				pairings[i] = new Pairing();
@@ -355,7 +354,20 @@ public class MySQLBridge {
 		}
 		return false;
 	}
+	public synchronized boolean removePairing(int MUserId, int FUserId) {
+		try {
+			String sql = "DELETE FROM pairings WHERE MUserId=="+ MUserId + " and FUserId=="+ FUserId +";";
+			int rowChanged = stmt.executeUpdate(sql);
+			if (rowChanged > 0)
+				return true;
+			else
+				return false;
 
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public synchronized boolean updatePairingStatus(int MUserId, int FUserId, String pairingStatus) {
 		try {
 			String sql = "UPDATE pairings SET pairingStatus=\"" + pairingStatus + "\" WHERE " + "MUserId==" + MUserId

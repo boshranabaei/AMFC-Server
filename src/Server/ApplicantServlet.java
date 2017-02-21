@@ -84,6 +84,14 @@ public class ApplicantServlet extends HttpServlet {
 			else
 				out.println("{\"mission\":\"unsuccessful\"}");
 		}
+		else if(task.equals("removePairing")){
+			int MUserId = Integer.parseInt(request.getParameter("MUserId"));
+			int FUserId = Integer.parseInt(request.getParameter("FUserId"));
+			if(MySQLBridge.msql.removePairing(MUserId,FUserId))
+				out.println("{\"mission\":\"accomplished\"}");
+			else
+				out.println("{\"mission\":\"unsuccessful\"}");
+		}
 		out.close();
 	}
 }
