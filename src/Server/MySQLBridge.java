@@ -236,7 +236,7 @@ public class MySQLBridge {
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'"
 				+ applicant.status + "\',\'" + applicant.dateAdded + "\')";
-
+		System.out.println(sql);
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
