@@ -125,7 +125,7 @@ public class MySQLBridge {
 				applicants[i].lastName = rs.getString("lastName");
 				applicants[i].birthYear = rs.getString("birthYear");
 				applicants[i].gender = rs.getInt("gender");
-				applicants[i].hasORwantsHijab=rs.getString("hasORwantsHijab");
+				applicants[i].hasORwantsHijab = rs.getString("hasORwantsHijab");
 				applicants[i].age = calculateAge(applicants[i].birthYear);
 				applicants[i].citizenship = rs.getString("citizenship");
 				applicants[i].ethnicity = rs.getString("ethnicity");
@@ -176,7 +176,7 @@ public class MySQLBridge {
 			applicant.age = calculateAge(applicant.birthYear);
 			applicant.citizenship = rs.getString("citizenship");
 			applicant.ethnicity = rs.getString("ethnicity");
-			applicant.hasORwantsHijab=rs.getString("hasORwantsHijab");
+			applicant.hasORwantsHijab = rs.getString("hasORwantsHijab");
 			applicant.maritalStatus = rs.getString("maritalStatus");
 			applicant.children = rs.getInt("children");
 			applicant.city = rs.getString("city");
@@ -208,9 +208,6 @@ public class MySQLBridge {
 
 	public synchronized boolean updateApplicant(Applicant applicant) {
 
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar calToday = Calendar.getInstance();
-
 		applicant.age = calculateAge(applicant.birthYear);
 		if (applicant.prefAgeMax != 0)
 			applicant.prefAgeMax = Math.abs(applicant.age - applicant.prefAgeMax);
@@ -221,7 +218,7 @@ public class MySQLBridge {
 			applicant.prefAgeMax = -applicant.prefAgeMax;
 		}
 
-		String sql = "DELETE FROM applicants WHERE userId=="+applicant.userId+";";
+		String sql = "DELETE FROM applicants WHERE userId==" + applicant.userId + ";";
 		try {
 			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
@@ -237,8 +234,8 @@ public class MySQLBridge {
 				+ "\',\'" + applicant.city + "\',\'" + applicant.province + "\',\'" + applicant.country + "\',\'"
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
-				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
-				+ "\',\'approved\',\'"+applicant.status+"\',\'" + applicant.dateAdded + "\')";
+				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'"
+				+ applicant.status + "\',\'" + applicant.dateAdded + "\')";
 
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
@@ -251,7 +248,85 @@ public class MySQLBridge {
 		}
 		return false;
 	}
-	
+
+	public synchronized Pairing[] getPairingsById(long userId, int gender) {
+		Pairing[] pairings = null;
+		try {
+			String sql = "SELECT COUNT(*) , * FROM pairings where ";
+			if(gender==0)
+				sql+="MUserId=="+userId+";";
+			else
+				sql+="FUserId=="+userId+";";
+			rs = stmt.executeQuery(sql); 
+			pairings = new Pairing[rs.getInt("COUNT(*)")];
+			rs.next();
+			for (int i = 0; i < pairings.length; i++) {
+				pairings[i]= new Pairing();
+				pairings[i].MUserId = rs.getInt("MUserId");
+				pairings[i].FUserId = rs.getInt("FUserId");
+				pairings[i].director = rs.getString("director");
+				pairings[i].pairingStatus=rs.getString("pairingStatus");
+				pairings[i].pairingDate=rs.getString("pairingDate");
+				rs.next();
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return pairings;
+	}
+
+	public synchronized Applicant [] getCandidates(int gender){
+		Applicant [] candidates = null;
+		try {
+			String sql = "SELECT COUNT(*) FROM applicants WHERE gender !="+gender+";";
+			rs = stmt.executeQuery(sql);
+			candidates = new Applicant[rs.getInt("COUNT(*)")];
+
+			sql = "SELECT * FROM applicants WHERE gender !="+gender+";";
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			for (int i = 0; i < candidates.length; i++) {
+				candidates[i] = new Applicant();
+				candidates[i].userId = rs.getInt("userId");
+				candidates[i].firstName = rs.getString("firstName");
+				candidates[i].lastName = rs.getString("lastName");
+				candidates[i].birthYear = rs.getString("birthYear");
+				candidates[i].gender = rs.getInt("gender");
+				candidates[i].hasORwantsHijab = rs.getString("hasORwantsHijab");
+				candidates[i].age = calculateAge(candidates[i].birthYear);
+				candidates[i].citizenship = rs.getString("citizenship");
+				candidates[i].ethnicity = rs.getString("ethnicity");
+				candidates[i].maritalStatus = rs.getString("maritalStatus");
+				candidates[i].children = rs.getInt("children");
+				candidates[i].city = rs.getString("city");
+				candidates[i].province = rs.getString("province");
+				candidates[i].country = rs.getString("country");
+				candidates[i].education = rs.getString("education");
+				candidates[i].occupation = rs.getString("occupation");
+				candidates[i].comments = rs.getString("comments");
+				candidates[i].prefMaritalStatus = rs.getString("prefMaritalStatus");
+				candidates[i].prefAgeMax = rs.getInt("prefAgeMax");
+				candidates[i].prefAgeMin = rs.getInt("prefAgeMin");
+				candidates[i].prefEthnicity = rs.getString("prefEthnicity");
+				candidates[i].prefEducation = rs.getString("prefEducation");
+				candidates[i].prefCountry = rs.getString("prefCountry");
+				candidates[i].prefComments = rs.getString("prefComments");
+				candidates[i].email = rs.getString("email");
+				candidates[i].dateAdded = rs.getString("dateAdded");
+				candidates[i].status = rs.getString("status");
+				candidates[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
+
+				rs.next();
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return candidates;
+	}
 	public synchronized void setUserId() {
 
 		try {
@@ -283,8 +358,6 @@ public class MySQLBridge {
 	}
 
 }
-
-
 
 // try {
 // System.out.println("Creating the database...");
