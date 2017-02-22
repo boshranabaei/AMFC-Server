@@ -236,7 +236,6 @@ public class MySQLBridge {
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'"
 				+ applicant.status + "\',\'" + applicant.dateAdded + "\')";
-		System.out.println(sql);
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
@@ -344,6 +343,9 @@ public class MySQLBridge {
 			String sql = "INSERT INTO pairings VALUES("+ MUserId + ","+ FUserId +",\""+director+"\",\"on going\",\""+
 					dateFormatter.format(calToday.getTime())+"\");";
 			int rowChanged = stmt.executeUpdate(sql);
+			sql = "Update applicants SET status=\"busy\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+			stmt.executeUpdate(sql);
+			
 			if (rowChanged > 0)
 				return true;
 			else
@@ -358,6 +360,9 @@ public class MySQLBridge {
 		try {
 			String sql = "DELETE FROM pairings WHERE MUserId=="+ MUserId + " and FUserId=="+ FUserId +";";
 			int rowChanged = stmt.executeUpdate(sql);
+			sql = "Update applicants SET status=\"free\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+			stmt.executeUpdate(sql);
+			
 			if (rowChanged > 0)
 				return true;
 			else
@@ -373,6 +378,14 @@ public class MySQLBridge {
 			String sql = "UPDATE pairings SET pairingStatus=\"" + pairingStatus + "\" WHERE " + "MUserId==" + MUserId
 					+ " AND FUserId==" + FUserId + ";";
 			int rowChanged = stmt.executeUpdate(sql);
+			if(!pairingStatus.equals("on going")){
+				sql = "Update applicants SET status=\"free\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+				stmt.executeUpdate(sql);
+			}else{
+				sql = "Update applicants SET status=\"busy\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+				stmt.executeUpdate(sql);
+			}
+			
 			if (rowChanged > 0)
 				return true;
 			else

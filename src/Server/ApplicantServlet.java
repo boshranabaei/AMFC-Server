@@ -21,7 +21,6 @@ public class ApplicantServlet extends HttpServlet {
 		String task = request.getParameter("task");
 		Gson gson = new GsonBuilder().create();
 		PrintWriter out = response.getWriter();
-		System.out.println(task);
 		if( task.equals("newApplicant")){
 			String jsonString = request.getParameter("applicant");
 			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
