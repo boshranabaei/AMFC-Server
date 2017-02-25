@@ -22,7 +22,7 @@ public class MySQLBridge {
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(WIN_URL);
+			conn = DriverManager.getConnection(LINUX_URL);
 			stmt = conn.createStatement();
 			setUserId();
 		} catch (SQLException e) {
@@ -397,6 +397,12 @@ public class MySQLBridge {
 		return false;
 	}
 
+	public synchronized boolean archiveApplicant(int userId) {
+		//INSERT INTO Destination SELECT * FROM Source;
+		return true;
+		
+	}
+	
 	public synchronized void setUserId() {
 		try {
 			String sql = "SELECT max(userId) FROM applicants;";
@@ -452,3 +458,5 @@ public class MySQLBridge {
  * SQLite commands: .tables => show all tables drop table table_name => delete
  * table
  */
+
+//http://stackoverflow.com/questions/9357668/how-to-store-image-in-sqlite-database

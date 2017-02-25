@@ -91,6 +91,13 @@ public class ApplicantServlet extends HttpServlet {
 			else
 				out.println("{\"mission\":\"unsuccessful\"}");
 		}
+		else if(task.equals("archiveApplicant")){
+			int userId = Integer.parseInt(request.getParameter("userId"));
+			if(MySQLBridge.msql.archiveApplicant(userId))
+				out.println("{\"mission\":\"accomplished\"}");
+			else
+				out.println("{\"mission\":\"unsuccessful\"}");
+		}
 		out.close();
 	}
 }
