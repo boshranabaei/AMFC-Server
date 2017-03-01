@@ -36,10 +36,11 @@ public class Applicant {
 	String approvalStatus;
 	String status;
 	String dateAdded;
+	int archived;
 }
 
 /*	
-CREATE TABLE applicants (	
+CREATE TABLE archivedApplicants (	
 userId LONG,
 firstName VARCHAR(255), 
 lastName VARCHAR(255),
@@ -73,5 +74,6 @@ prefComments VARCHAR(1000),
 amfcPointOfContact VARCHAR(100),
 approvalStatus VARCHAR(10),
 status VARCHAR(10),
-dateAdded VARCHAR(10));
+dateAdded VARCHAR(10)
+archived INTEGER);
 */

@@ -22,7 +22,7 @@ public class MySQLBridge {
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(LINUX_URL);
+			conn = DriverManager.getConnection(WIN_URL);
 			stmt = conn.createStatement();
 			setUserId();
 		} catch (SQLException e) {
@@ -92,7 +92,7 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
-				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\')";
+				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0)";
 
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
@@ -148,7 +148,7 @@ public class MySQLBridge {
 				applicants[i].dateAdded = rs.getString("dateAdded");
 				applicants[i].status = rs.getString("status");
 				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
-
+				applicants[i].archived = rs.getInt("archived");
 				rs.next();
 			}
 
@@ -196,6 +196,7 @@ public class MySQLBridge {
 			applicant.dateAdded = rs.getString("dateAdded");
 			applicant.status = rs.getString("status");
 			applicant.amfcPointOfContact = rs.getString("amfcPointOfContact");
+			applicant.archived = rs.getInt("archived");
 
 		} catch (
 
@@ -235,7 +236,7 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'"
-				+ applicant.status + "\',\'" + applicant.dateAdded + "\')";
+				+ applicant.status + "\',\'" + applicant.dateAdded + "\',0)";
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
@@ -251,7 +252,7 @@ public class MySQLBridge {
 	public synchronized Pairing[] getPairingsById(long userId, int gender) {
 		Pairing[] pairings = null;
 		try {
-			
+
 			String sql = "SELECT COUNT(*) FROM pairings where ";
 			if (gender == 0)
 				sql += "MUserId==" + userId + ";";
@@ -259,7 +260,7 @@ public class MySQLBridge {
 				sql += "FUserId==" + userId + ";";
 			rs = stmt.executeQuery(sql);
 			pairings = new Pairing[rs.getInt("COUNT(*)")];
-			
+
 			sql = "SELECT * FROM pairings where ";
 			if (gender == 0)
 				sql += "MUserId==" + userId + ";";
@@ -284,14 +285,31 @@ public class MySQLBridge {
 		return pairings;
 	}
 
-	public synchronized Applicant[] getCandidates(int gender) {
+	public synchronized Applicant[] getCandidates(int gender, int userId) {
 		Applicant[] candidates = null;
 		try {
-			String sql = "SELECT COUNT(*) FROM applicants WHERE gender !=" + gender + ";";
-			rs = stmt.executeQuery(sql);
-			candidates = new Applicant[rs.getInt("COUNT(*)")];
 
-			sql = "SELECT * FROM applicants WHERE gender !=" + gender + ";";
+			String sql = "SELECT ( SELECT COUNT(*) from archivedApplicants where userId in ";
+			if (gender == 1)
+				sql += "(SELECT MUserId FROM pairings WHERE FUserId==" + userId + "))";
+			else
+				sql += "(SELECT FUserId FROM pairings WHERE MUserId==" + userId + "))";
+			
+			sql += "+ (SELECT COUNT(*) FROM applicants WHERE gender !=" + gender + ");";
+			
+			rs = stmt.executeQuery(sql);
+			ResultSetMetaData rsmd = rs.getMetaData();
+			rs.next();
+			candidates = new Applicant[rs.getInt(rsmd.getColumnName(1))];
+			
+			sql = "SELECT * from archivedApplicants where userId in ";
+			if (gender == 1)
+				sql += "(SELECT MUserId FROM pairings WHERE FUserId==" + userId + ")";
+			else
+				sql += "(SELECT FUserId FROM pairings WHERE MUserId==" + userId + ")";
+			
+			sql += "UNION SELECT * FROM applicants WHERE gender !=" + gender + ";";
+
 			rs = stmt.executeQuery(sql);
 			rs.next();
 			for (int i = 0; i < candidates.length; i++) {
@@ -324,7 +342,7 @@ public class MySQLBridge {
 				candidates[i].dateAdded = rs.getString("dateAdded");
 				candidates[i].status = rs.getString("status");
 				candidates[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
-
+				candidates[i].archived = rs.getInt("archived");
 				rs.next();
 			}
 
@@ -340,12 +358,12 @@ public class MySQLBridge {
 		Calendar calToday = Calendar.getInstance();
 
 		try {
-			String sql = "INSERT INTO pairings VALUES("+ MUserId + ","+ FUserId +",\""+director+"\",\"on going\",\""+
-					dateFormatter.format(calToday.getTime())+"\");";
+			String sql = "INSERT INTO pairings VALUES(" + MUserId + "," + FUserId + ",\"" + director
+					+ "\",\"on going\",\"" + dateFormatter.format(calToday.getTime()) + "\");";
 			int rowChanged = stmt.executeUpdate(sql);
-			sql = "Update applicants SET status=\"busy\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+			sql = "Update applicants SET status=\"busy\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
 			stmt.executeUpdate(sql);
-			
+
 			if (rowChanged > 0)
 				return true;
 			else
@@ -356,13 +374,14 @@ public class MySQLBridge {
 		}
 		return false;
 	}
+
 	public synchronized boolean removePairing(int MUserId, int FUserId) {
 		try {
-			String sql = "DELETE FROM pairings WHERE MUserId=="+ MUserId + " and FUserId=="+ FUserId +";";
+			String sql = "DELETE FROM pairings WHERE MUserId==" + MUserId + " and FUserId==" + FUserId + ";";
 			int rowChanged = stmt.executeUpdate(sql);
-			sql = "Update applicants SET status=\"free\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+			sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
 			stmt.executeUpdate(sql);
-			
+
 			if (rowChanged > 0)
 				return true;
 			else
@@ -373,19 +392,20 @@ public class MySQLBridge {
 		}
 		return false;
 	}
+
 	public synchronized boolean updatePairingStatus(int MUserId, int FUserId, String pairingStatus) {
 		try {
 			String sql = "UPDATE pairings SET pairingStatus=\"" + pairingStatus + "\" WHERE " + "MUserId==" + MUserId
 					+ " AND FUserId==" + FUserId + ";";
 			int rowChanged = stmt.executeUpdate(sql);
-			if(!pairingStatus.equals("on going")){
-				sql = "Update applicants SET status=\"free\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+			if (!pairingStatus.equals("on going")) {
+				sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
 				stmt.executeUpdate(sql);
-			}else{
-				sql = "Update applicants SET status=\"busy\" WHERE userId=="+ MUserId + " OR userId=="+ FUserId +";";
+			} else {
+				sql = "Update applicants SET status=\"busy\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
 				stmt.executeUpdate(sql);
 			}
-			
+
 			if (rowChanged > 0)
 				return true;
 			else
@@ -398,14 +418,32 @@ public class MySQLBridge {
 	}
 
 	public synchronized boolean archiveApplicant(int userId) {
-		//INSERT INTO Destination SELECT * FROM Source;
-		return true;
-		
+		try {
+			String sql = "SELECT COUNT(*) FROM pairings WHERE (FUserId ==" + userId + " OR MUserId ==" + userId + ")"
+					+ "AND pairingStatus==\"on going\";";
+			rs = stmt.executeQuery(sql);
+
+			if (rs.getInt("COUNT(*)") > 0)
+				return false;
+
+			sql = "INSERT INTO archivedApplicants SELECT * FROM applicants WHERE userId==" + userId + ";";
+			stmt.executeUpdate(sql);
+			sql = "DELETE FROM applicants WHERE userId==" + userId + ";";
+			stmt.executeUpdate(sql);
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
 	}
-	
+
 	public synchronized void setUserId() {
 		try {
-			String sql = "SELECT max(userId) FROM applicants;";
+			String sql = "SELECT max(userId) FROM " + "(SELECT userId FROM applicants UNION ALL"
+					+ " SELECT userId FROM archivedApplicants);";
+
 			rs = stmt.executeQuery(sql);
 			rs.next();
 			userID = rs.getInt("max(userId)");
@@ -459,4 +497,4 @@ public class MySQLBridge {
  * table
  */
 
-//http://stackoverflow.com/questions/9357668/how-to-store-image-in-sqlite-database
+// http://stackoverflow.com/questions/9357668/how-to-store-image-in-sqlite-database

@@ -61,7 +61,8 @@ public class ApplicantServlet extends HttpServlet {
 		}
 		else if(task.equals("getCandidates")){
 			int gender = Integer.parseInt(request.getParameter("gender"));
-			Applicant [] candidates = MySQLBridge.msql.getCandidates(gender);
+			int userId = Integer.parseInt(request.getParameter("userId"));
+			Applicant [] candidates = MySQLBridge.msql.getCandidates(gender,userId);
 			out.println("{\"candidates\":"+gson.toJson(candidates)+"}");
 		}
 		else if(task.equals("updatePairingStatus")){
