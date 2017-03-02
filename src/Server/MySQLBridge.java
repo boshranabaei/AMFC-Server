@@ -379,7 +379,20 @@ public class MySQLBridge {
 		try {
 			String sql = "DELETE FROM pairings WHERE MUserId==" + MUserId + " and FUserId==" + FUserId + ";";
 			int rowChanged = stmt.executeUpdate(sql);
-			sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
+			sql = "SELECT COUNT(*) FROM pairings WHERE MUserId==" + MUserId + " AND pairingStatus==\"on going\";";
+			rs = stmt.executeQuery(sql);
+			if (rs.getInt("COUNT(*)") == 0){
+				sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + ";";
+				stmt.executeUpdate(sql);
+			}
+			
+			sql = "SELECT COUNT(*) FROM pairings WHERE FUserId==" + FUserId + " AND pairingStatus==\"on going\";";
+			rs = stmt.executeQuery(sql);
+			if (rs.getInt("COUNT(*)") == 0){
+				sql = "Update applicants SET status=\"free\" WHERE userId==" + FUserId + ";";
+				stmt.executeUpdate(sql);
+			}
+			
 			stmt.executeUpdate(sql);
 
 			if (rowChanged > 0)
@@ -399,8 +412,20 @@ public class MySQLBridge {
 					+ " AND FUserId==" + FUserId + ";";
 			int rowChanged = stmt.executeUpdate(sql);
 			if (!pairingStatus.equals("on going")) {
-				sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
-				stmt.executeUpdate(sql);
+				sql = "SELECT COUNT(*) FROM pairings WHERE MUserId==" + MUserId + " AND pairingStatus==\"on going\";";
+				rs = stmt.executeQuery(sql);
+				if (rs.getInt("COUNT(*)") == 0){
+					sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + ";";
+					stmt.executeUpdate(sql);
+				}
+				
+				sql = "SELECT COUNT(*) FROM pairings WHERE FUserId==" + FUserId + " AND pairingStatus==\"on going\";";
+				rs = stmt.executeQuery(sql);
+				if (rs.getInt("COUNT(*)") == 0){
+					sql = "Update applicants SET status=\"free\" WHERE userId==" + FUserId + ";";
+					stmt.executeUpdate(sql);
+				}
+				
 			} else {
 				sql = "Update applicants SET status=\"busy\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
 				stmt.executeUpdate(sql);
