@@ -37,6 +37,7 @@ public class Applicant {
 	String status;
 	String dateAdded;
 	int archived;
+	int approximateAge;
 }
 
 /*	
@@ -74,6 +75,7 @@ prefComments VARCHAR(1000),
 amfcPointOfContact VARCHAR(100),
 approvalStatus VARCHAR(10),
 status VARCHAR(10),
-dateAdded VARCHAR(10)
-archived INTEGER);
+dateAdded VARCHAR(10),
+archived INTEGER,
+approximateAge INTEGER);
 */

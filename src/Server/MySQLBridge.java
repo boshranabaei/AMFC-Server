@@ -92,7 +92,7 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
-				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0)";
+				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"+applicant.approximateAge+")";
 
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
@@ -149,6 +149,7 @@ public class MySQLBridge {
 				applicants[i].status = rs.getString("status");
 				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
 				applicants[i].archived = rs.getInt("archived");
+				applicants[i].approximateAge = rs .getInt("approximateAge");
 				rs.next();
 			}
 
@@ -197,6 +198,7 @@ public class MySQLBridge {
 			applicant.status = rs.getString("status");
 			applicant.amfcPointOfContact = rs.getString("amfcPointOfContact");
 			applicant.archived = rs.getInt("archived");
+			applicant.approximateAge = rs .getInt("approximateAge");
 
 		} catch (
 
@@ -236,7 +238,7 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'"
-				+ applicant.status + "\',\'" + applicant.dateAdded + "\',0)";
+				+ applicant.status + "\',\'" + applicant.dateAdded + "\',0,"+applicant.approximateAge+")";
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
@@ -343,6 +345,7 @@ public class MySQLBridge {
 				candidates[i].status = rs.getString("status");
 				candidates[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
 				candidates[i].archived = rs.getInt("archived");
+				candidates[i].approximateAge = rs.getInt("approximateAge");
 				rs.next();
 			}
 
@@ -519,7 +522,7 @@ public class MySQLBridge {
 
 /*
  * SQLite commands: .tables => show all tables drop table table_name => delete
- * table
+ * alter table x add column y integer;
  */
 
 // http://stackoverflow.com/questions/9357668/how-to-store-image-in-sqlite-database
