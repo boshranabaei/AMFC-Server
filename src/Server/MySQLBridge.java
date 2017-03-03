@@ -127,6 +127,7 @@ public class MySQLBridge {
 				applicants[i].gender = rs.getInt("gender");
 				applicants[i].hasORwantsHijab = rs.getString("hasORwantsHijab");
 				applicants[i].age = calculateAge(applicants[i].birthYear);
+				applicants[i].smoke = rs.getInt("smoke");
 				applicants[i].citizenship = rs.getString("citizenship");
 				applicants[i].ethnicity = rs.getString("ethnicity");
 				applicants[i].maritalStatus = rs.getString("maritalStatus");
@@ -178,6 +179,7 @@ public class MySQLBridge {
 			applicant.gender = rs.getInt("gender");
 			applicant.age = calculateAge(applicant.birthYear);
 			applicant.citizenship = rs.getString("citizenship");
+			applicant.smoke = rs.getInt("smoke");
 			applicant.ethnicity = rs.getString("ethnicity");
 			applicant.hasORwantsHijab = rs.getString("hasORwantsHijab");
 			applicant.maritalStatus = rs.getString("maritalStatus");
@@ -327,6 +329,7 @@ public class MySQLBridge {
 				candidates[i].gender = rs.getInt("gender");
 				candidates[i].hasORwantsHijab = rs.getString("hasORwantsHijab");
 				candidates[i].age = calculateAge(candidates[i].birthYear);
+				candidates[i].smoke = rs.getInt("smoke");
 				candidates[i].citizenship = rs.getString("citizenship");
 				candidates[i].ethnicity = rs.getString("ethnicity");
 				candidates[i].maritalStatus = rs.getString("maritalStatus");
