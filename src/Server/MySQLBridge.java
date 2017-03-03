@@ -22,7 +22,7 @@ public class MySQLBridge {
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(WIN_URL);
+			conn = DriverManager.getConnection(LINUX_URL);
 			stmt = conn.createStatement();
 			setUserId();
 		} catch (SQLException e) {
@@ -131,6 +131,8 @@ public class MySQLBridge {
 				applicants[i].ethnicity = rs.getString("ethnicity");
 				applicants[i].maritalStatus = rs.getString("maritalStatus");
 				applicants[i].children = rs.getInt("children");
+				applicants[i].relocate = rs.getInt("relocate");
+				applicants[i].relocateWhere = rs.getString("relocateWhere");
 				applicants[i].city = rs.getString("city");
 				applicants[i].province = rs.getString("province");
 				applicants[i].country = rs.getString("country");
@@ -180,6 +182,8 @@ public class MySQLBridge {
 			applicant.hasORwantsHijab = rs.getString("hasORwantsHijab");
 			applicant.maritalStatus = rs.getString("maritalStatus");
 			applicant.children = rs.getInt("children");
+			applicant.relocate = rs.getInt("relocate");
+			applicant.relocateWhere = rs.getString("relocateWhere");
 			applicant.city = rs.getString("city");
 			applicant.province = rs.getString("province");
 			applicant.country = rs.getString("country");
@@ -326,6 +330,8 @@ public class MySQLBridge {
 				candidates[i].citizenship = rs.getString("citizenship");
 				candidates[i].ethnicity = rs.getString("ethnicity");
 				candidates[i].maritalStatus = rs.getString("maritalStatus");
+				candidates[i].relocate = rs.getInt("relocate");
+				candidates[i].relocateWhere = rs.getString("relocateWhere");
 				candidates[i].children = rs.getInt("children");
 				candidates[i].city = rs.getString("city");
 				candidates[i].province = rs.getString("province");
