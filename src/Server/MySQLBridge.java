@@ -145,6 +145,9 @@ public class MySQLBridge {
 				applicants[i].prefCountry = rs.getString("prefCountry");
 				applicants[i].prefComments = rs.getString("prefComments");
 				applicants[i].email = rs.getString("email");
+				applicants[i].mobilePhoneNumber = rs.getString("mobilePhoneNumber");
+				applicants[i].homePhoneNumber = rs.getString("homePhoneNumber");
+				applicants[i].pointOfContact = rs.getString("pointOfContact");
 				applicants[i].dateAdded = rs.getString("dateAdded");
 				applicants[i].status = rs.getString("status");
 				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
@@ -194,6 +197,9 @@ public class MySQLBridge {
 			applicant.prefCountry = rs.getString("prefCountry");
 			applicant.prefComments = rs.getString("prefComments");
 			applicant.email = rs.getString("email");
+			applicant.mobilePhoneNumber = rs.getString("mobilePhoneNumber");
+			applicant.homePhoneNumber = rs.getString("homePhoneNumber");
+			applicant.pointOfContact = rs.getString("pointOfContact");
 			applicant.dateAdded = rs.getString("dateAdded");
 			applicant.status = rs.getString("status");
 			applicant.amfcPointOfContact = rs.getString("amfcPointOfContact");
@@ -341,6 +347,9 @@ public class MySQLBridge {
 				candidates[i].prefCountry = rs.getString("prefCountry");
 				candidates[i].prefComments = rs.getString("prefComments");
 				candidates[i].email = rs.getString("email");
+				candidates[i].mobilePhoneNumber = rs.getString("mobilePhoneNumber");
+				candidates[i].homePhoneNumber = rs.getString("homePhoneNumber");
+				candidates[i].pointOfContact = rs.getString("pointOfContact");
 				candidates[i].dateAdded = rs.getString("dateAdded");
 				candidates[i].status = rs.getString("status");
 				candidates[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
