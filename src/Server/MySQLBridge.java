@@ -22,7 +22,7 @@ public class MySQLBridge {
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(LINUX_URL);
+			conn = DriverManager.getConnection(WIN_URL);
 			stmt = conn.createStatement();
 			setUserId();
 		} catch (SQLException e) {

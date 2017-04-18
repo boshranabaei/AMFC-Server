@@ -99,6 +99,10 @@ public class ApplicantServlet extends HttpServlet {
 			else
 				out.println("{\"mission\":\"unsuccessful\"}");
 		}
+		else if(task.equals("uploadPhoto")){
+			out.println("{\"mission\":\"accomplished\"}");
+			System.out.println("SHokr");
+		}
 		out.close();
 	}
 }
