@@ -46,7 +46,8 @@ public class ApplicantServlet extends HttpServlet {
 		else if(task.equals("updateApplicant")){
 			String jsonString = request.getParameter("applicant");
 			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
-			System.out.println(newApplicant.firstName);
+			newApplicant.photo = request.getParameter("photo[base64]");
+			System.out.println(newApplicant.photo);
 			if(MySQLBridge.msql.updateApplicant(newApplicant)){
 				out.println("{\"mission\":\"accomplished\"}");
 			}
