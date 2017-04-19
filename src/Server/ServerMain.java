@@ -20,8 +20,10 @@ public class ServerMain {
 	public static void main(String[] args) throws Exception {
 		
 		// Create a basic Jetty server object
+		System.setProperty("org.eclipse.jetty.server.Request.maxFormContentSize", "-1");
 		Server server = new Server(8080);
-
+		
+		
 		// Resource handler for the web site
 		ResourceHandler resource_handler1 = new ResourceHandler();
 		resource_handler1.setDirectoriesListed(true);
@@ -31,8 +33,8 @@ public class ServerMain {
 
 		// The address of the content(. must be there)
 		resource_handler1.setResourceBase(WIN_ADRESS);
-		ContextHandler contextHandler1 = new ContextHandler("/");
-		contextHandler1.setHandler(resource_handler1);
+		ContextHandler contextHandler = new ContextHandler("/");
+		contextHandler.setHandler(resource_handler1);
 
 		// Adding context handler for Servlets
 		ServletContextHandler ServHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -51,7 +53,7 @@ public class ServerMain {
 		
 		// Adding handlers to the server
 		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[] { contextHandler1, ServHandler });
+		handlers.setHandlers(new Handler[] { contextHandler, ServHandler });
 		server.setHandler(handlers);
 
 		// Start things up! By using the server.join() the server thread will

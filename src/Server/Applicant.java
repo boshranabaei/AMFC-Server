@@ -38,6 +38,7 @@ public class Applicant {
 	String dateAdded;
 	int archived;
 	int approximateAge;
+	String photo;
 }
 
 /*	
@@ -77,5 +78,6 @@ approvalStatus VARCHAR(10),
 status VARCHAR(10),
 dateAdded VARCHAR(10),
 archived INTEGER,
-approximateAge INTEGER);
+approximateAge INTEGER,
+photo VARCHAR(10000));
 */

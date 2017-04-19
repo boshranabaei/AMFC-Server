@@ -92,7 +92,8 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
-				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"+applicant.approximateAge+")";
+				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"+applicant.approximateAge+
+				", \""+applicant.photo+"\")";
 
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
@@ -156,6 +157,7 @@ public class MySQLBridge {
 				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
 				applicants[i].archived = rs.getInt("archived");
 				applicants[i].approximateAge = rs .getInt("approximateAge");
+				applicants[i].photo = rs.getString("photo");
 				rs.next();
 			}
 
@@ -211,7 +213,7 @@ public class MySQLBridge {
 			applicant.amfcPointOfContact = rs.getString("amfcPointOfContact");
 			applicant.archived = rs.getInt("archived");
 			applicant.approximateAge = rs .getInt("approximateAge");
-
+			applicant.photo = rs.getString("photo");
 		} catch (
 
 		SQLException e) {
@@ -250,7 +252,7 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'"
-				+ applicant.status + "\',\'" + applicant.dateAdded + "\',0,"+applicant.approximateAge+")";
+				+ applicant.status + "\',\'" + applicant.dateAdded + "\',0,"+applicant.approximateAge+ ",\""+applicant.photo+"\")";
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
@@ -322,7 +324,7 @@ public class MySQLBridge {
 			else
 				sql += "(SELECT FUserId FROM pairings WHERE MUserId==" + userId + ")";
 			
-			sql += "UNION SELECT * FROM applicants WHERE gender !=" + gender + ";";
+			sql += " UNION SELECT * FROM applicants WHERE gender !=" + gender + ";";
 
 			rs = stmt.executeQuery(sql);
 			rs.next();
@@ -364,6 +366,7 @@ public class MySQLBridge {
 				candidates[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
 				candidates[i].archived = rs.getInt("archived");
 				candidates[i].approximateAge = rs.getInt("approximateAge");
+				candidates[i].photo = rs.getString("photo");
 				rs.next();
 			}
 

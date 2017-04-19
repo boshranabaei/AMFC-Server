@@ -24,6 +24,7 @@ public class ApplicantServlet extends HttpServlet {
 		if( task.equals("newApplicant")){
 			String jsonString = request.getParameter("applicant");
 			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
+			newApplicant.photo = request.getParameter("photo[base64]");
 			if(MySQLBridge.msql.addApplicant(newApplicant)){
 				out.println("{\"mission\":\"accomplished\"}");
 			}
@@ -98,10 +99,6 @@ public class ApplicantServlet extends HttpServlet {
 				out.println("{\"mission\":\"accomplished\"}");
 			else
 				out.println("{\"mission\":\"unsuccessful\"}");
-		}
-		else if(task.equals("uploadPhoto")){
-			out.println("{\"mission\":\"accomplished\"}");
-			System.out.println("SHokr");
 		}
 		out.close();
 	}
