@@ -47,7 +47,6 @@ public class ApplicantServlet extends HttpServlet {
 			String jsonString = request.getParameter("applicant");
 			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
 			newApplicant.photo = request.getParameter("photo[base64]");
-			System.out.println(newApplicant.photo);
 			if(MySQLBridge.msql.updateApplicant(newApplicant)){
 				out.println("{\"mission\":\"accomplished\"}");
 			}

@@ -71,14 +71,10 @@ public class MySQLBridge {
 
 		applicant.age = calculateAge(applicant.birthYear);
 		if (applicant.prefAgeMax != 0)
-			applicant.prefAgeMax = Math.abs(applicant.age - applicant.prefAgeMax);
+			applicant.prefAgeMax = applicant.age - applicant.prefAgeMax;
 		if (applicant.prefAgeMin != 0)
-			applicant.prefAgeMin = Math.abs(applicant.age - applicant.prefAgeMin);
-		if (applicant.gender == 0) {
-			applicant.prefAgeMin = -applicant.prefAgeMin;
-			applicant.prefAgeMax = -applicant.prefAgeMax;
-		}
-
+			applicant.prefAgeMin = applicant.age - applicant.prefAgeMin;
+		
 		userID++;
 
 		String sql = "INSERT INTO applicants VALUES(" + userID + ",\'" + applicant.firstName + "\',\'"
@@ -227,14 +223,10 @@ public class MySQLBridge {
 
 		applicant.age = calculateAge(applicant.birthYear);
 		if (applicant.prefAgeMax != 0)
-			applicant.prefAgeMax = Math.abs(applicant.age - applicant.prefAgeMax);
+			applicant.prefAgeMax = applicant.age - applicant.prefAgeMax;
 		if (applicant.prefAgeMin != 0)
-			applicant.prefAgeMin = Math.abs(applicant.age - applicant.prefAgeMin);
-		if (applicant.gender == 0) {
-			applicant.prefAgeMin = -applicant.prefAgeMin;
-			applicant.prefAgeMax = -applicant.prefAgeMax;
-		}
-
+			applicant.prefAgeMin = applicant.age - applicant.prefAgeMin;
+		
 		String sql = "DELETE FROM applicants WHERE userId==" + applicant.userId + ";";
 		try {
 			stmt.executeUpdate(sql);
