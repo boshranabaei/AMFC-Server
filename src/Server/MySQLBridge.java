@@ -283,6 +283,7 @@ public class MySQLBridge {
 				pairings[i].director = rs.getString("director");
 				pairings[i].pairingStatus = rs.getString("pairingStatus");
 				pairings[i].pairingDate = rs.getString("pairingDate");
+				pairings[i].note = rs.getString("note");
 				rs.next();
 			}
 
@@ -375,7 +376,7 @@ public class MySQLBridge {
 
 		try {
 			String sql = "INSERT INTO pairings VALUES(" + MUserId + "," + FUserId + ",\"" + director
-					+ "\",\"on going\",\"" + dateFormatter.format(calToday.getTime()) + "\");";
+					+ "\",\"on going\",\"" + dateFormatter.format(calToday.getTime()) + "\",\"Add comments here\");";
 			int rowChanged = stmt.executeUpdate(sql);
 			sql = "Update applicants SET status=\"busy\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
 			stmt.executeUpdate(sql);
@@ -458,6 +459,22 @@ public class MySQLBridge {
 		return false;
 	}
 
+	public synchronized boolean addNote(int MUserId,int FUserId, String note){
+		try {
+			String sql = "UPDATE pairings SET note=\"" + note + "\" WHERE " + "MUserId==" + MUserId
+					+ " AND FUserId==" + FUserId + ";";
+			int rowChanged = stmt.executeUpdate(sql);
+			if (rowChanged > 0)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;		
+	}
+	
 	public synchronized boolean archiveApplicant(int userId) {
 		try {
 			String sql = "SELECT COUNT(*) FROM pairings WHERE (FUserId ==" + userId + " OR MUserId ==" + userId + ")"
@@ -477,7 +494,6 @@ public class MySQLBridge {
 			e.printStackTrace();
 			return false;
 		}
-
 	}
 
 	public synchronized void setUserId() {

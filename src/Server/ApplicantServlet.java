@@ -100,6 +100,15 @@ public class ApplicantServlet extends HttpServlet {
 			else
 				out.println("{\"mission\":\"unsuccessful\"}");
 		}
+		else if(task.equals("addComment")){
+			int MUserId = Integer.parseInt(request.getParameter("MUserId"));
+			int FUserId = Integer.parseInt(request.getParameter("FUserId"));
+			String note = request.getParameter("comment");
+			if(MySQLBridge.msql.addNote(MUserId,FUserId,note))
+				out.println("{\"mission\":\"accomplished\"}");
+			else
+				out.println("{\"mission\":\"unsuccessful\"}");
+		}
 		out.close();
 	}
 }
