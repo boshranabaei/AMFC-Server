@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @SuppressWarnings("serial")
 public class LoginServlet extends HttpServlet {
@@ -18,24 +19,30 @@ public class LoginServlet extends HttpServlet {
 		String password = request.getParameter("passwordInput");
 
 		PrintWriter out = response.getWriter();
+
 		
-		System.out.println(MySQLBridge.msql.authenticate(username, password));
 		if (MySQLBridge.msql.authenticate(username, password)) {
-			out.println("{\"isValid\":true}");
-			
-		} else {
-			out.println("{\"isValid\":false}");
-		}
+			if (!ServerMain.sessionMan.isStarting())
+				try {
+					ServerMain.sessionMan.start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			HttpSession session = ServerMain.sessionMan.newHttpSession(request);
+			String sessionId = session.getId();
+			out.println("{\"isValid\":true,\"sessionId\":\"" + sessionId + "\"}");
+
+//		} else {
+//			out.println("{\"isValid\":false}");
+//		}
 		out.close();
 	}
-	
+
 	/*
 	 * 
 	 * if (MySQLBridge.msql.authenticate(username, password)) {
-			response.sendRedirect("napp.html");
-		} else {
-			response.sendRedirect("");
-		}
-		*/
-	 
+	 * response.sendRedirect("napp.html"); } else { response.sendRedirect(""); }
+	 */
+
 }

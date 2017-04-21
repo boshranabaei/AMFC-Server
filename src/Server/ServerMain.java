@@ -10,20 +10,42 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.server.SessionManager;
+import org.eclipse.jetty.server.session.JDBCSessionManager;
+import org.eclipse.jetty.server.session.JDBCSessionIdManager;
 
 public class ServerMain {
 
 	static String WIN_ADRESS="../../AMFC/WebContent/";
 	static String LINUX_ADRESS="../AMFC/AMFC/WebContent/";		
 	static Map<String,Applicant> chosenApplicants = new HashMap<>();
+	static JDBCSessionIdManager idMan;
+	static SessionManager sessionMan;
 	
 	public static void main(String[] args) throws Exception {
 		
-		// Create a basic Jetty server object
+		// Increase the input size
 		System.setProperty("org.eclipse.jetty.server.Request.maxFormContentSize", "-1");
+
+		// Create a basic Jetty server object
 		Server server = new Server(8080);
+
+		// =======Session Management=======
+		// There are two components to session management in Jetty:
+		// 1-The session ID manager ensures that session IDs are unique
+		idMan = new JDBCSessionIdManager(server);
+		idMan.setDriverInfo("org.sqlite.JDBC", "jdbc:sqlite:C:/5-Java/JettyServer/AMFC-Server/db/amfc.db");
+
+		// 2-The session manager handles the session lifecycle
+		// (create/update/invalidate/expire)
+		sessionMan = new JDBCSessionManager();
+		sessionMan.setIdManager(idMan);
+		sessionMan.setMaxInactiveInterval(0);
+//		sessionMan.setSessionIdManager(server.getSessionIdManager());
 		
+		server.setSessionIdManager(idMan);
 		
+
 		// Resource handler for the web site
 		ResourceHandler resource_handler1 = new ResourceHandler();
 		resource_handler1.setDirectoriesListed(true);

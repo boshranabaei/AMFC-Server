@@ -74,7 +74,7 @@ public class MySQLBridge {
 			applicant.prefAgeMax = applicant.age - applicant.prefAgeMax;
 		if (applicant.prefAgeMin != 0)
 			applicant.prefAgeMin = applicant.age - applicant.prefAgeMin;
-		
+
 		userID++;
 
 		String sql = "INSERT INTO applicants VALUES(" + userID + ",\'" + applicant.firstName + "\',\'"
@@ -88,8 +88,8 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
-				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"+applicant.approximateAge+
-				", \""+applicant.photo+"\")";
+				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"
+				+ applicant.approximateAge + ", \"" + applicant.photo + "\")";
 
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
@@ -152,7 +152,7 @@ public class MySQLBridge {
 				applicants[i].status = rs.getString("status");
 				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
 				applicants[i].archived = rs.getInt("archived");
-				applicants[i].approximateAge = rs .getInt("approximateAge");
+				applicants[i].approximateAge = rs.getInt("approximateAge");
 				applicants[i].photo = rs.getString("photo");
 				rs.next();
 			}
@@ -208,7 +208,7 @@ public class MySQLBridge {
 			applicant.status = rs.getString("status");
 			applicant.amfcPointOfContact = rs.getString("amfcPointOfContact");
 			applicant.archived = rs.getInt("archived");
-			applicant.approximateAge = rs .getInt("approximateAge");
+			applicant.approximateAge = rs.getInt("approximateAge");
 			applicant.photo = rs.getString("photo");
 		} catch (
 
@@ -226,7 +226,7 @@ public class MySQLBridge {
 			applicant.prefAgeMax = applicant.age - applicant.prefAgeMax;
 		if (applicant.prefAgeMin != 0)
 			applicant.prefAgeMin = applicant.age - applicant.prefAgeMin;
-		
+
 		String sql = "DELETE FROM applicants WHERE userId==" + applicant.userId + ";";
 		try {
 			stmt.executeUpdate(sql);
@@ -244,7 +244,8 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'approved\',\'"
-				+ applicant.status + "\',\'" + applicant.dateAdded + "\',0,"+applicant.approximateAge+ ",\""+applicant.photo+"\")";
+				+ applicant.status + "\',\'" + applicant.dateAdded + "\',0," + applicant.approximateAge + ",\""
+				+ applicant.photo + "\")";
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
@@ -303,20 +304,20 @@ public class MySQLBridge {
 				sql += "(SELECT MUserId FROM pairings WHERE FUserId==" + userId + "))";
 			else
 				sql += "(SELECT FUserId FROM pairings WHERE MUserId==" + userId + "))";
-			
+
 			sql += "+ (SELECT COUNT(*) FROM applicants WHERE gender !=" + gender + ");";
-			
+
 			rs = stmt.executeQuery(sql);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			rs.next();
 			candidates = new Applicant[rs.getInt(rsmd.getColumnName(1))];
-			
+
 			sql = "SELECT * from archivedApplicants where userId in ";
 			if (gender == 1)
 				sql += "(SELECT MUserId FROM pairings WHERE FUserId==" + userId + ")";
 			else
 				sql += "(SELECT FUserId FROM pairings WHERE MUserId==" + userId + ")";
-			
+
 			sql += " UNION SELECT * FROM applicants WHERE gender !=" + gender + ";";
 
 			rs = stmt.executeQuery(sql);
@@ -398,18 +399,18 @@ public class MySQLBridge {
 			int rowChanged = stmt.executeUpdate(sql);
 			sql = "SELECT COUNT(*) FROM pairings WHERE MUserId==" + MUserId + " AND pairingStatus==\"on going\";";
 			rs = stmt.executeQuery(sql);
-			if (rs.getInt("COUNT(*)") == 0){
+			if (rs.getInt("COUNT(*)") == 0) {
 				sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + ";";
 				stmt.executeUpdate(sql);
 			}
-			
+
 			sql = "SELECT COUNT(*) FROM pairings WHERE FUserId==" + FUserId + " AND pairingStatus==\"on going\";";
 			rs = stmt.executeQuery(sql);
-			if (rs.getInt("COUNT(*)") == 0){
+			if (rs.getInt("COUNT(*)") == 0) {
 				sql = "Update applicants SET status=\"free\" WHERE userId==" + FUserId + ";";
 				stmt.executeUpdate(sql);
 			}
-			
+
 			stmt.executeUpdate(sql);
 
 			if (rowChanged > 0)
@@ -431,18 +432,18 @@ public class MySQLBridge {
 			if (!pairingStatus.equals("on going")) {
 				sql = "SELECT COUNT(*) FROM pairings WHERE MUserId==" + MUserId + " AND pairingStatus==\"on going\";";
 				rs = stmt.executeQuery(sql);
-				if (rs.getInt("COUNT(*)") == 0){
+				if (rs.getInt("COUNT(*)") == 0) {
 					sql = "Update applicants SET status=\"free\" WHERE userId==" + MUserId + ";";
 					stmt.executeUpdate(sql);
 				}
-				
+
 				sql = "SELECT COUNT(*) FROM pairings WHERE FUserId==" + FUserId + " AND pairingStatus==\"on going\";";
 				rs = stmt.executeQuery(sql);
-				if (rs.getInt("COUNT(*)") == 0){
+				if (rs.getInt("COUNT(*)") == 0) {
 					sql = "Update applicants SET status=\"free\" WHERE userId==" + FUserId + ";";
 					stmt.executeUpdate(sql);
 				}
-				
+
 			} else {
 				sql = "Update applicants SET status=\"busy\" WHERE userId==" + MUserId + " OR userId==" + FUserId + ";";
 				stmt.executeUpdate(sql);
@@ -459,10 +460,10 @@ public class MySQLBridge {
 		return false;
 	}
 
-	public synchronized boolean addNote(int MUserId,int FUserId, String note){
+	public synchronized boolean addNote(int MUserId, int FUserId, String note) {
 		try {
-			String sql = "UPDATE pairings SET note=\"" + note + "\" WHERE " + "MUserId==" + MUserId
-					+ " AND FUserId==" + FUserId + ";";
+			String sql = "UPDATE pairings SET note=\"" + note + "\" WHERE " + "MUserId==" + MUserId + " AND FUserId=="
+					+ FUserId + ";";
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
 				return true;
@@ -472,9 +473,9 @@ public class MySQLBridge {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return false;		
+		return false;
 	}
-	
+
 	public synchronized boolean archiveApplicant(int userId) {
 		try {
 			String sql = "SELECT COUNT(*) FROM pairings WHERE (FUserId ==" + userId + " OR MUserId ==" + userId + ")"
@@ -496,6 +497,45 @@ public class MySQLBridge {
 		}
 	}
 
+	// add to sessionUserInfo
+	synchronized String findSessionForUser(String username) {
+		String sql = "SELECT sessionId FROM sessionUserInfo WHERE username=\'" + username + "\'";
+		String sessionId = null;
+		try {
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next())
+				sessionId = rs.getString("sessionId");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return sessionId;
+	}
+
+	// add to sessionUserInfo
+	synchronized void addToSessionUserInfo(String sessionId, String username) {
+		String sql = "INSERT INTO sessionUserInfo VALUES (\'" + sessionId + "\' ,\'" + username + "\');";
+		try {
+			stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// delete old session
+	void deleteOldSessions() {
+		String sql1 = "DELETE FROM JettySessionIds  WHERE 1=1";
+		String sql2 = "DELETE FROM JettySessions  WHERE 1=1";
+		String sql3 = "DELETE FROM sessionUserInfo  WHERE 1=1";
+		try {
+			stmt.executeQuery(sql1);
+			stmt.executeQuery(sql2);
+			stmt.executeQuery(sql3);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
 	public synchronized void setUserId() {
 		try {
 			String sql = "SELECT max(userId) FROM " + "(SELECT userId FROM applicants UNION ALL"
@@ -550,8 +590,12 @@ public class MySQLBridge {
 // }
 
 /*
- * SQLite commands: .tables => show all tables drop table table_name => delete
- * alter table x add column y integer;
+ * SQLite commands: .tables => show all tables 
+ * drop table table_name => delete
+ * alter table x add column y integer; => add column
  */
 
-// http://stackoverflow.com/questions/9357668/how-to-store-image-in-sqlite-database
+
+/*
+ * create table sessionUserInfo ( sessionId VARCHAR(200),username VARCHAR(20) );
+ */
