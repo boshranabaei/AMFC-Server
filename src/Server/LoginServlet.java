@@ -15,34 +15,23 @@ public class LoginServlet extends HttpServlet {
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
 		String username = request.getParameter("userIDInput");
 		String password = request.getParameter("passwordInput");
 
 		PrintWriter out = response.getWriter();
-
-		
 		if (MySQLBridge.msql.authenticate(username, password)) {
-			if (!ServerMain.sessionMan.isStarting())
-				try {
-					ServerMain.sessionMan.start();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 
-			HttpSession session = ServerMain.sessionMan.newHttpSession(request);
-			String sessionId = session.getId();
-			out.println("{\"isValid\":true,\"sessionId\":\"" + sessionId + "\"}");
+			// The session is tied to a single browser, and all frames/tabs
+			// opened in this browser share the same session. If you exit the
+			// browser, you lose the session.
+			HttpSession session = request.getSession();
+			System.out.println(session.getId());
 
-//		} else {
-//			out.println("{\"isValid\":false}");
-//		}
+			out.println("{\"isValid\":true}");
+		} else {
+			out.println("{\"isValid\":false}");
+		}
 		out.close();
 	}
-
-	/*
-	 * 
-	 * if (MySQLBridge.msql.authenticate(username, password)) {
-	 * response.sendRedirect("napp.html"); } else { response.sendRedirect(""); }
-	 */
-
 }

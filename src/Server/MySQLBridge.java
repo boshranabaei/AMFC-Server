@@ -17,7 +17,6 @@ public class MySQLBridge {
 	java.sql.Statement stmt;
 	ResultSet rs;
 	public static MySQLBridge msql = new MySQLBridge();
-	// TODO relative address
 
 	// Establishing connection to the database
 	public MySQLBridge() {
@@ -28,7 +27,6 @@ public class MySQLBridge {
 		} catch (SQLException e) {
 			System.out.println("NO Connection");
 		}
-		// TODO Handle errors if the database doesn't exist
 	}
 
 	// Check the username and password
@@ -497,44 +495,6 @@ public class MySQLBridge {
 		}
 	}
 
-	// add to sessionUserInfo
-	synchronized String findSessionForUser(String username) {
-		String sql = "SELECT sessionId FROM sessionUserInfo WHERE username=\'" + username + "\'";
-		String sessionId = null;
-		try {
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next())
-				sessionId = rs.getString("sessionId");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return sessionId;
-	}
-
-	// add to sessionUserInfo
-	synchronized void addToSessionUserInfo(String sessionId, String username) {
-		String sql = "INSERT INTO sessionUserInfo VALUES (\'" + sessionId + "\' ,\'" + username + "\');";
-		try {
-			stmt.executeQuery(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	// delete old session
-	void deleteOldSessions() {
-		String sql1 = "DELETE FROM JettySessionIds  WHERE 1=1";
-		String sql2 = "DELETE FROM JettySessions  WHERE 1=1";
-		String sql3 = "DELETE FROM sessionUserInfo  WHERE 1=1";
-		try {
-			stmt.executeQuery(sql1);
-			stmt.executeQuery(sql2);
-			stmt.executeQuery(sql3);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	
 	public synchronized void setUserId() {
 		try {
@@ -597,5 +557,5 @@ public class MySQLBridge {
 
 
 /*
- * create table sessionUserInfo ( sessionId VARCHAR(200),username VARCHAR(20) );
+ * create table sessionUserInfo ( sessionId VARCHAR(200),username VARCHAR(20),expireDate VARCHAR(10));
  */
