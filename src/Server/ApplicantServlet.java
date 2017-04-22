@@ -27,8 +27,11 @@ public class ApplicantServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 
-		if (session.isNew() || Calendar.getInstance().getTimeInMillis() - session.getLastAccessedTime() > 30 * 100) {
-			System.out.println(session.getId() + "  Time out");
+		if (session.isNew()){
+			session.invalidate();
+			out.println("{\"session\":\"denied\"}");
+		}
+		else if(Calendar.getInstance().getTimeInMillis() - session.getLastAccessedTime() > 30 * 100) {
 			session.invalidate();
 			out.println("{\"session\":\"time out\"}");
 
