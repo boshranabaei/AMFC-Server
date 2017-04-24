@@ -26,7 +26,6 @@ public class LoginServlet extends HttpServlet {
 			// opened in this browser share the same session. If you exit the
 			// browser, you lose the session.
 			HttpSession session = request.getSession();
-			System.out.println(session.getId());
 
 			out.println("{\"isValid\":true}");
 		} else {

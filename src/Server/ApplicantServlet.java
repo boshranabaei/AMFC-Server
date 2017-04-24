@@ -31,7 +31,7 @@ public class ApplicantServlet extends HttpServlet {
 			session.invalidate();
 			out.println("{\"session\":\"denied\"}");
 		}
-		else if(Calendar.getInstance().getTimeInMillis() - session.getLastAccessedTime() > 30 * 100) {
+		else if(Calendar.getInstance().getTimeInMillis() - session.getLastAccessedTime() > 12* 30 * 1000) {
 			session.invalidate();
 			out.println("{\"session\":\"time out\"}");
 
