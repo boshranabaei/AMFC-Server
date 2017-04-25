@@ -46,6 +46,52 @@ public class MySQLBridge {
 		return isValid;
 	}
 
+	// Update profile info
+	public synchronized boolean updateProfile(String username, String firstName, String lastName, String email, String phoneNumber) {
+		String sql = "UPDATE admins SET firstName = \'" + firstName + "\', lastName = \'"+lastName+
+				"\', email=\'"+email+"\', phoneNumber=\'"+phoneNumber+"\'"
+				+ " WHERE username = \'" + username+ "\';";
+		try {
+			int rowChanged = stmt.executeUpdate(sql);
+			if (rowChanged > 0)
+				return true;
+			else
+				return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public synchronized Admin[] getAdmins() {
+
+		Admin[] admins = null;
+
+		try {
+			String sql = "SELECT COUNT(*) FROM admins;";
+			rs = stmt.executeQuery(sql);
+			admins = new Admin[rs.getInt("COUNT(*)")];
+
+			sql = "SELECT * FROM Admins;";
+			rs = stmt.executeQuery(sql);
+			rs.next();
+			for (int i = 0; i < admins.length; i++) {
+				admins[i] = new Admin();
+				admins[i].username = rs.getString("username");
+				admins[i].firstName = rs.getString("firstName");
+				admins[i].lastName = rs.getString("lastName");
+				admins[i].email = rs.getString("email");
+				admins[i].phoneNumber = rs.getString("phoneNumber");
+				rs.next();
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return admins;
+	}
+	
 	// To change the password
 	public boolean changePassword(String username, String oldPassword, String newPassword) {
 		String sql = "UPDATE admins SET password = \'" + newPassword + "\' WHERE username = \'" + username
@@ -62,6 +108,7 @@ public class MySQLBridge {
 		return false;
 	}
 
+	
 	public synchronized boolean addApplicant(Applicant applicant) {
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -532,12 +579,6 @@ public class MySQLBridge {
 // System.out.println("Creating the database...");
 // conn = DriverManager.getConnection(DB_URL, USER, PASS);
 // String sql = "CREATE DATABASE AMFC";
-// stmt.executeUpdate(sql);
-// sql = "CREATE TABLE admins (username VARCHAR(255), password VARCHAR(255),
-// firstName VARCHAR(255), lastName VARCHAR(255), email VARCHAR(255),
-// phoneNumber VARCHAR(255))";
-
-// stmt.executeUpdate(sql);
 //
 // } catch (SQLException e1) {
 // e1.printStackTrace();
