@@ -10,7 +10,7 @@ import java.util.Date;
 public class MySQLBridge {
 
 	static final String WIN_URL = "jdbc:sqlite:C:/5-Java/JettyServer/AMFC-Server/db/amfc.db";
-	static final String LINUX_URL = "jdbc:sqlite:/home/bnabaei/AMFC-Server/db/amfc.db";
+	static final String LINUX_URL = "jdbc:sqlite:/root/AMFC-Server/db/amfc.db";
 
 	static int userID = 1;
 	Connection conn;
@@ -21,7 +21,7 @@ public class MySQLBridge {
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(WIN_URL);
+			conn = DriverManager.getConnection(LINUX_URL);
 			stmt = conn.createStatement();
 			setUserId();
 		} catch (SQLException e) {
