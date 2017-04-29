@@ -21,7 +21,7 @@ public class MySQLBridge {
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(LINUX_URL);
+			conn = DriverManager.getConnection(WIN_URL);
 			stmt = conn.createStatement();
 			setUserId();
 		} catch (SQLException e) {
@@ -133,7 +133,7 @@ public class MySQLBridge {
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
 				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
-				+ "\',\'approved\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"
+				+ "\',\'"+applicant.approvalStatus +"\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"
 				+ applicant.approximateAge + ", \"" + applicant.photo + "\")";
 
 		try {
@@ -148,60 +148,20 @@ public class MySQLBridge {
 		return false;
 	}
 
-	public synchronized Applicant[] getApplicants() {
+	public synchronized Applicant[] getApplicants(String approvalStatus) {
 
 		Applicant[] applicants = null;
 
 		try {
-			String sql = "SELECT COUNT(*) FROM applicants;";
+			String sql = "SELECT COUNT(*) FROM applicants WHERE approvalStatus==\'" + approvalStatus+"\';";
 			rs = stmt.executeQuery(sql);
 			applicants = new Applicant[rs.getInt("COUNT(*)")];
 
-			sql = "SELECT * FROM applicants;";
+			sql = "SELECT * FROM applicants WHERE approvalStatus==\'" + approvalStatus+"\';";
 			rs = stmt.executeQuery(sql);
 			rs.next();
-			for (int i = 0; i < applicants.length; i++) {
-				applicants[i] = new Applicant();
-				applicants[i].userId = rs.getInt("userId");
-				applicants[i].firstName = rs.getString("firstName");
-				applicants[i].lastName = rs.getString("lastName");
-				applicants[i].birthYear = rs.getString("birthYear");
-				applicants[i].gender = rs.getInt("gender");
-				applicants[i].hasORwantsHijab = rs.getString("hasORwantsHijab");
-				applicants[i].age = calculateAge(applicants[i].birthYear);
-				applicants[i].smoke = rs.getInt("smoke");
-				applicants[i].citizenship = rs.getString("citizenship");
-				applicants[i].ethnicity = rs.getString("ethnicity");
-				applicants[i].maritalStatus = rs.getString("maritalStatus");
-				applicants[i].children = rs.getInt("children");
-				applicants[i].relocate = rs.getInt("relocate");
-				applicants[i].relocateWhere = rs.getString("relocateWhere");
-				applicants[i].city = rs.getString("city");
-				applicants[i].province = rs.getString("province");
-				applicants[i].country = rs.getString("country");
-				applicants[i].education = rs.getString("education");
-				applicants[i].occupation = rs.getString("occupation");
-				applicants[i].comments = rs.getString("comments");
-				applicants[i].prefMaritalStatus = rs.getString("prefMaritalStatus");
-				applicants[i].prefAgeMax = rs.getInt("prefAgeMax");
-				applicants[i].prefAgeMin = rs.getInt("prefAgeMin");
-				applicants[i].prefEthnicity = rs.getString("prefEthnicity");
-				applicants[i].prefEducation = rs.getString("prefEducation");
-				applicants[i].prefCountry = rs.getString("prefCountry");
-				applicants[i].prefComments = rs.getString("prefComments");
-				applicants[i].email = rs.getString("email");
-				applicants[i].mobilePhoneNumber = rs.getString("mobilePhoneNumber");
-				applicants[i].homePhoneNumber = rs.getString("homePhoneNumber");
-				applicants[i].pointOfContact = rs.getString("pointOfContact");
-				applicants[i].dateAdded = rs.getString("dateAdded");
-				applicants[i].status = rs.getString("status");
-				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
-				applicants[i].archived = rs.getInt("archived");
-				applicants[i].approximateAge = rs.getInt("approximateAge");
-				applicants[i].photo = rs.getString("photo");
-				rs.next();
-			}
-
+			applicants = fillUpFromQuery(applicants,rs);
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -209,59 +169,25 @@ public class MySQLBridge {
 		return applicants;
 	}
 
-	public synchronized Applicant getApplicantById(int userId) {
+	public synchronized Applicant [] getApplicantById(int userId) {
 
-		Applicant applicant = null;
+		Applicant[] applicants = null;
 
 		try {
 			String sql = "SELECT * FROM applicants where userId==" + userId + ";";
 			rs = stmt.executeQuery(sql);
 			rs.next();
-			applicant = new Applicant();
-			applicant.userId = rs.getInt("userId");
-			applicant.firstName = rs.getString("firstName");
-			applicant.lastName = rs.getString("lastName");
-			applicant.birthYear = rs.getString("birthYear");
-			applicant.gender = rs.getInt("gender");
-			applicant.age = calculateAge(applicant.birthYear);
-			applicant.citizenship = rs.getString("citizenship");
-			applicant.smoke = rs.getInt("smoke");
-			applicant.ethnicity = rs.getString("ethnicity");
-			applicant.hasORwantsHijab = rs.getString("hasORwantsHijab");
-			applicant.maritalStatus = rs.getString("maritalStatus");
-			applicant.children = rs.getInt("children");
-			applicant.relocate = rs.getInt("relocate");
-			applicant.relocateWhere = rs.getString("relocateWhere");
-			applicant.city = rs.getString("city");
-			applicant.province = rs.getString("province");
-			applicant.country = rs.getString("country");
-			applicant.education = rs.getString("education");
-			applicant.occupation = rs.getString("occupation");
-			applicant.comments = rs.getString("comments");
-			applicant.prefMaritalStatus = rs.getString("prefMaritalStatus");
-			applicant.prefAgeMax = rs.getInt("prefAgeMax");
-			applicant.prefAgeMin = rs.getInt("prefAgeMin");
-			applicant.prefEthnicity = rs.getString("prefEthnicity");
-			applicant.prefEducation = rs.getString("prefEducation");
-			applicant.prefCountry = rs.getString("prefCountry");
-			applicant.prefComments = rs.getString("prefComments");
-			applicant.email = rs.getString("email");
-			applicant.mobilePhoneNumber = rs.getString("mobilePhoneNumber");
-			applicant.homePhoneNumber = rs.getString("homePhoneNumber");
-			applicant.pointOfContact = rs.getString("pointOfContact");
-			applicant.dateAdded = rs.getString("dateAdded");
-			applicant.status = rs.getString("status");
-			applicant.amfcPointOfContact = rs.getString("amfcPointOfContact");
-			applicant.archived = rs.getInt("archived");
-			applicant.approximateAge = rs.getInt("approximateAge");
-			applicant.photo = rs.getString("photo");
+			applicants = new Applicant[1];
+			
+			applicants = fillUpFromQuery(applicants,rs);
+			
 		} catch (
 
 		SQLException e) {
 			e.printStackTrace();
 		}
 
-		return applicant;
+		return applicants;
 	}
 
 	public synchronized boolean updateApplicant(Applicant applicant) {
@@ -367,47 +293,7 @@ public class MySQLBridge {
 
 			rs = stmt.executeQuery(sql);
 			rs.next();
-			for (int i = 0; i < candidates.length; i++) {
-				candidates[i] = new Applicant();
-				candidates[i].userId = rs.getInt("userId");
-				candidates[i].firstName = rs.getString("firstName");
-				candidates[i].lastName = rs.getString("lastName");
-				candidates[i].birthYear = rs.getString("birthYear");
-				candidates[i].gender = rs.getInt("gender");
-				candidates[i].hasORwantsHijab = rs.getString("hasORwantsHijab");
-				candidates[i].age = calculateAge(candidates[i].birthYear);
-				candidates[i].smoke = rs.getInt("smoke");
-				candidates[i].citizenship = rs.getString("citizenship");
-				candidates[i].ethnicity = rs.getString("ethnicity");
-				candidates[i].maritalStatus = rs.getString("maritalStatus");
-				candidates[i].relocate = rs.getInt("relocate");
-				candidates[i].relocateWhere = rs.getString("relocateWhere");
-				candidates[i].children = rs.getInt("children");
-				candidates[i].city = rs.getString("city");
-				candidates[i].province = rs.getString("province");
-				candidates[i].country = rs.getString("country");
-				candidates[i].education = rs.getString("education");
-				candidates[i].occupation = rs.getString("occupation");
-				candidates[i].comments = rs.getString("comments");
-				candidates[i].prefMaritalStatus = rs.getString("prefMaritalStatus");
-				candidates[i].prefAgeMax = rs.getInt("prefAgeMax");
-				candidates[i].prefAgeMin = rs.getInt("prefAgeMin");
-				candidates[i].prefEthnicity = rs.getString("prefEthnicity");
-				candidates[i].prefEducation = rs.getString("prefEducation");
-				candidates[i].prefCountry = rs.getString("prefCountry");
-				candidates[i].prefComments = rs.getString("prefComments");
-				candidates[i].email = rs.getString("email");
-				candidates[i].mobilePhoneNumber = rs.getString("mobilePhoneNumber");
-				candidates[i].homePhoneNumber = rs.getString("homePhoneNumber");
-				candidates[i].pointOfContact = rs.getString("pointOfContact");
-				candidates[i].dateAdded = rs.getString("dateAdded");
-				candidates[i].status = rs.getString("status");
-				candidates[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
-				candidates[i].archived = rs.getInt("archived");
-				candidates[i].approximateAge = rs.getInt("approximateAge");
-				candidates[i].photo = rs.getString("photo");
-				rs.next();
-			}
+			candidates = fillUpFromQuery(candidates,rs);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -573,6 +459,55 @@ public class MySQLBridge {
 		return age;
 	}
 
+
+	Applicant[] fillUpFromQuery(Applicant [] applicants, ResultSet rs){
+		for (int i = 0; i < applicants.length; i++) {
+			applicants[i] = new Applicant();
+			try {
+				applicants[i].userId = rs.getInt("userId");
+				applicants[i].firstName = rs.getString("firstName");
+				applicants[i].lastName = rs.getString("lastName");
+				applicants[i].birthYear = rs.getString("birthYear");
+				applicants[i].gender = rs.getInt("gender");
+				applicants[i].hasORwantsHijab = rs.getString("hasORwantsHijab");
+				applicants[i].age = calculateAge(applicants[i].birthYear);
+				applicants[i].smoke = rs.getInt("smoke");
+				applicants[i].citizenship = rs.getString("citizenship");
+				applicants[i].ethnicity = rs.getString("ethnicity");
+				applicants[i].maritalStatus = rs.getString("maritalStatus");
+				applicants[i].children = rs.getInt("children");
+				applicants[i].relocate = rs.getInt("relocate");
+				applicants[i].relocateWhere = rs.getString("relocateWhere");
+				applicants[i].city = rs.getString("city");
+				applicants[i].province = rs.getString("province");
+				applicants[i].country = rs.getString("country");
+				applicants[i].education = rs.getString("education");
+				applicants[i].occupation = rs.getString("occupation");
+				applicants[i].comments = rs.getString("comments");
+				applicants[i].prefMaritalStatus = rs.getString("prefMaritalStatus");
+				applicants[i].prefAgeMax = rs.getInt("prefAgeMax");
+				applicants[i].prefAgeMin = rs.getInt("prefAgeMin");
+				applicants[i].prefEthnicity = rs.getString("prefEthnicity");
+				applicants[i].prefEducation = rs.getString("prefEducation");
+				applicants[i].prefCountry = rs.getString("prefCountry");
+				applicants[i].prefComments = rs.getString("prefComments");
+				applicants[i].email = rs.getString("email");
+				applicants[i].mobilePhoneNumber = rs.getString("mobilePhoneNumber");
+				applicants[i].homePhoneNumber = rs.getString("homePhoneNumber");
+				applicants[i].pointOfContact = rs.getString("pointOfContact");
+				applicants[i].dateAdded = rs.getString("dateAdded");
+				applicants[i].status = rs.getString("status");
+				applicants[i].amfcPointOfContact = rs.getString("amfcPointOfContact");
+				applicants[i].archived = rs.getInt("archived");
+				applicants[i].approximateAge = rs.getInt("approximateAge");
+				applicants[i].photo = rs.getString("photo");
+				rs.next();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return applicants;
+	}
 }
 
 // try {

@@ -27,36 +27,49 @@ public class ServerMain {
 		Server server = new Server(8080);
 		
 
-		// Resource handler for the web site
+		// Resource handler for the admin web site
 		ResourceHandler resource_handler1 = new ResourceHandler();
 		resource_handler1.setDirectoriesListed(true);
 		
 		// Home page to show up
 		resource_handler1.setWelcomeFiles(new String[] { "index.html" });
 
+		// Resource handler for the public web site
+		ResourceHandler resource_handler2 = new ResourceHandler();
+		resource_handler2.setDirectoriesListed(true);
+		
+		// Home page to show up
+		resource_handler2.setWelcomeFiles(new String[] { "index.html" });
+
+		
 		// The address of the content(. must be there)
-		resource_handler1.setResourceBase(LINUX_ADRESS);
-		ContextHandler contextHandler = new ContextHandler("/");
-		contextHandler.setHandler(resource_handler1);
+		resource_handler1.setResourceBase(WIN_ADRESS);
+		ContextHandler contextHandler1 = new ContextHandler("/");
+		contextHandler1.setHandler(resource_handler1);
+		
+		// The address of the content(. must be there)
+		resource_handler2.setResourceBase(WIN_ADRESS+"public/");
+		ContextHandler contextHandler2 = new ContextHandler("/registration");
+		contextHandler2.setHandler(resource_handler2);
 
 		// Adding context handler for Servlets
 		ServletContextHandler ServHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
 		// ...Login Servlet
 		ServHandler.addServlet(LoginServlet.class, "/login");
-		ServHandler.setBaseResource(Resource.newResource(LINUX_ADRESS));
+		ServHandler.setBaseResource(Resource.newResource(WIN_ADRESS));
 
 		// ...Settings Servlet
 		ServHandler.addServlet(SettingsServlet.class, "/settings");
-		ServHandler.setBaseResource(Resource.newResource(LINUX_ADRESS));
+		ServHandler.setBaseResource(Resource.newResource(WIN_ADRESS));
 
 		// ...Applicant Servlet
 		ServHandler.addServlet(ApplicantServlet.class, "/applicant");
-		ServHandler.setBaseResource(Resource.newResource(LINUX_ADRESS));
+		ServHandler.setBaseResource(Resource.newResource(WIN_ADRESS));
 		
 		// Adding handlers to the server
 		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[] { contextHandler, ServHandler });
+		handlers.setHandlers(new Handler[] { contextHandler1, contextHandler2, ServHandler });
 		server.setHandler(handlers);
 
 		// Start things up! By using the server.join() the server thread will
