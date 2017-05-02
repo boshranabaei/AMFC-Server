@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.json.simple.JSONArray;
+
 public class MySQLBridge {
 
 	static final String WIN_URL = "jdbc:sqlite:C:/5-Java/JettyServer/AMFC-Server/db/amfc.db";
@@ -21,7 +23,7 @@ public class MySQLBridge {
 	// Establishing connection to the database
 	public MySQLBridge() {
 		try {
-			conn = DriverManager.getConnection(WIN_URL);
+			conn = DriverManager.getConnection(LINUX_URL);
 			stmt = conn.createStatement();
 			setUserId();
 		} catch (SQLException e) {
@@ -47,10 +49,10 @@ public class MySQLBridge {
 	}
 
 	// Update profile info
-	public synchronized boolean updateProfile(String username, String firstName, String lastName, String email, String phoneNumber) {
-		String sql = "UPDATE admins SET firstName = \'" + firstName + "\', lastName = \'"+lastName+
-				"\', email=\'"+email+"\', phoneNumber=\'"+phoneNumber+"\'"
-				+ " WHERE username = \'" + username+ "\';";
+	public synchronized boolean updateProfile(String username, String firstName, String lastName, String email,
+			String phoneNumber) {
+		String sql = "UPDATE admins SET firstName = \'" + firstName + "\', lastName = \'" + lastName + "\', email=\'"
+				+ email + "\', phoneNumber=\'" + phoneNumber + "\'" + " WHERE username = \'" + username + "\';";
 		try {
 			int rowChanged = stmt.executeUpdate(sql);
 			if (rowChanged > 0)
@@ -91,7 +93,7 @@ public class MySQLBridge {
 
 		return admins;
 	}
-	
+
 	// To change the password
 	public boolean changePassword(String username, String oldPassword, String newPassword) {
 		String sql = "UPDATE admins SET password = \'" + newPassword + "\' WHERE username = \'" + username
@@ -108,7 +110,6 @@ public class MySQLBridge {
 		return false;
 	}
 
-	
 	public synchronized boolean addApplicant(Applicant applicant) {
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -132,8 +133,8 @@ public class MySQLBridge {
 				+ "\',\'" + applicant.city + "\',\'" + applicant.province + "\',\'" + applicant.country + "\',\'"
 				+ applicant.prefMaritalStatus + "\'," + applicant.prefAgeMin + "," + applicant.prefAgeMax + ",\'"
 				+ applicant.prefEthnicity + "\',\'" + applicant.prefEducation + "\',\'" + applicant.prefCountry
-				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact
-				+ "\',\'"+applicant.approvalStatus +"\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"
+				+ "\',\'" + applicant.prefComments + "\',\'" + applicant.amfcPointOfContact + "\',\'"
+				+ applicant.approvalStatus + "\',\'free\',\'" + dateFormatter.format(calToday.getTime()) + "\',0,"
 				+ applicant.approximateAge + ", \"" + applicant.photo + "\")";
 
 		try {
@@ -153,15 +154,15 @@ public class MySQLBridge {
 		Applicant[] applicants = null;
 
 		try {
-			String sql = "SELECT COUNT(*) FROM applicants WHERE approvalStatus==\'" + approvalStatus+"\';";
+			String sql = "SELECT COUNT(*) FROM applicants WHERE approvalStatus==\'" + approvalStatus + "\';";
 			rs = stmt.executeQuery(sql);
 			applicants = new Applicant[rs.getInt("COUNT(*)")];
 
-			sql = "SELECT * FROM applicants WHERE approvalStatus==\'" + approvalStatus+"\';";
+			sql = "SELECT * FROM applicants WHERE approvalStatus==\'" + approvalStatus + "\';";
 			rs = stmt.executeQuery(sql);
 			rs.next();
-			applicants = fillUpFromQuery(applicants,rs);
-			
+			applicants = fillUpFromQuery(applicants, rs);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -169,7 +170,7 @@ public class MySQLBridge {
 		return applicants;
 	}
 
-	public synchronized Applicant [] getApplicantById(int userId) {
+	public synchronized Applicant[] getApplicantById(int userId) {
 
 		Applicant[] applicants = null;
 
@@ -178,9 +179,9 @@ public class MySQLBridge {
 			rs = stmt.executeQuery(sql);
 			rs.next();
 			applicants = new Applicant[1];
-			
-			applicants = fillUpFromQuery(applicants,rs);
-			
+
+			applicants = fillUpFromQuery(applicants, rs);
+
 		} catch (
 
 		SQLException e) {
@@ -293,7 +294,7 @@ public class MySQLBridge {
 
 			rs = stmt.executeQuery(sql);
 			rs.next();
-			candidates = fillUpFromQuery(candidates,rs);
+			candidates = fillUpFromQuery(candidates, rs);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -428,6 +429,58 @@ public class MySQLBridge {
 		}
 	}
 
+	public synchronized boolean acceptApplicant(JSONArray userIdsArray) {
+		String sql = "UPDATE applicants SET approvalStatus=\'approved\' WHERE ";
+		for (int i = 0; i < userIdsArray.size(); i++) {
+			 sql+=  "userId==" + userIdsArray.get(i).toString();
+			 if(i<userIdsArray.size()-1)
+				 sql+=" OR ";
+		}
+		sql+= ";";
+		try {
+			int rowChanged = stmt.executeUpdate(sql);
+			if (rowChanged > 0)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public synchronized boolean rejectApplicant(JSONArray userIdsArray) {
+		try {
+			String sql = "INSERT INTO archivedApplicants SELECT * FROM applicants WHERE ";
+
+			for (int i = 0; i < userIdsArray.size(); i++) {
+				 sql+=  "userId==" + userIdsArray.get(i).toString();
+				 if(i<userIdsArray.size()-1)
+					 sql+=" OR ";
+			}
+			sql+= ";";
+			
+			stmt.executeUpdate(sql);
+			sql = "DELETE FROM applicants WHERE ";
+			
+			for (int i = 0; i < userIdsArray.size(); i++) {
+				 sql+=  "userId==" + userIdsArray.get(i).toString();
+				 if(i<userIdsArray.size()-1)
+					 sql+=" OR ";
+			}
+			sql+= ";";
+			
+			
+			stmt.executeUpdate(sql);
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	
 	public synchronized void setUserId() {
 		try {
@@ -459,8 +512,7 @@ public class MySQLBridge {
 		return age;
 	}
 
-
-	Applicant[] fillUpFromQuery(Applicant [] applicants, ResultSet rs){
+	Applicant[] fillUpFromQuery(Applicant[] applicants, ResultSet rs) {
 		for (int i = 0; i < applicants.length; i++) {
 			applicants[i] = new Applicant();
 			try {
@@ -526,12 +578,11 @@ public class MySQLBridge {
 // }
 
 /*
- * SQLite commands: .tables => show all tables 
- * drop table table_name => delete
+ * SQLite commands: .tables => show all tables drop table table_name => delete
  * alter table x add column y integer; => add column
  */
 
-
 /*
- * create table sessionUserInfo ( sessionId VARCHAR(200),username VARCHAR(20),expireDate VARCHAR(10));
+ * create table sessionUserInfo ( sessionId VARCHAR(200),username
+ * VARCHAR(20),expireDate VARCHAR(10));
  */

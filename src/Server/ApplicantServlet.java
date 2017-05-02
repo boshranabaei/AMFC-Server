@@ -10,6 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -37,6 +42,7 @@ public class ApplicantServlet extends HttpServlet {
 			} else {
 				out.println("{\"mission\":\"unsuccessful\"}");
 			}
+			
 		} else {
 			HttpSession session = request.getSession();
 
@@ -48,6 +54,44 @@ public class ApplicantServlet extends HttpServlet {
 				session.invalidate();
 				out.println("{\"session\":\"time out\"}");
 
+			} else if (task.equals("acceptNewApplicant")) {
+				String userIds = request.getParameter("userId");
+				
+				JSONParser parser = new JSONParser();
+				JSONObject json=null;
+				try {
+					json = (JSONObject) parser.parse(userIds);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				JSONArray userIdsArray = (JSONArray) json.get("userIds");
+				
+				if (MySQLBridge.msql.acceptApplicant(userIdsArray)) {
+					out.println("{\"mission\":\"accomplished\"}");
+				} else {
+					out.println("{\"mission\":\"unsuccessful\"}");
+				}
+				
+			} else if (task.equals("rejectApplicant")) {
+				String userIds = request.getParameter("userId");
+				
+				JSONParser parser = new JSONParser();
+				JSONObject json=null;
+				try {
+					json = (JSONObject) parser.parse(userIds);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				JSONArray userIdsArray = (JSONArray) json.get("userIds");
+				
+				if (MySQLBridge.msql.rejectApplicant(userIdsArray)) {
+					out.println("{\"mission\":\"accomplished\"}");
+				} else {
+					out.println("{\"mission\":\"unsuccessful\"}");
+				}
+				
 			} else if (task.equals("newApplicant")) {
 				String jsonString = request.getParameter("applicant");
 				Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
