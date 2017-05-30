@@ -44,12 +44,12 @@ public class ServerMain {
 		
 		// The address of the content(. must be there)
 		resource_handler1.setResourceBase(LINUX_ADRESS);
-		ContextHandler contextHandler1 = new ContextHandler("/");
+		ContextHandler contextHandler1 = new ContextHandler("/admin");
 		contextHandler1.setHandler(resource_handler1);
 		
 		// The address of the content(. must be there)
 		resource_handler2.setResourceBase(LINUX_ADRESS+"public/");
-		ContextHandler contextHandler2 = new ContextHandler("/registration");
+		ContextHandler contextHandler2 = new ContextHandler("/");
 		contextHandler2.setHandler(resource_handler2);
 
 		// Adding context handler for Servlets
