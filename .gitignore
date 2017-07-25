@@ -1,2 +1,3 @@
 bin/Server/MySQLBridge.class
 db/amfc.db
+src/Server/MySQLBridge.java

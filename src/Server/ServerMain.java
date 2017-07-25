@@ -57,17 +57,15 @@ public class ServerMain {
 
 		// ...Login Servlet
 		ServHandler.addServlet(LoginServlet.class, "/login");
-		ServHandler.setBaseResource(Resource.newResource(LINUX_ADRESS));
 
 		// ...Settings Servlet
 		ServHandler.addServlet(SettingsServlet.class, "/settings");
-		ServHandler.setBaseResource(Resource.newResource(LINUX_ADRESS));
 
 		// ...Applicant Servlet
 		ServHandler.addServlet(ApplicantServlet.class, "/applicant");
-		ServHandler.setBaseResource(Resource.newResource(LINUX_ADRESS));
 		
 		// Adding handlers to the server
+		ServHandler.setBaseResource(Resource.newResource(LINUX_ADRESS));
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { contextHandler1, contextHandler2, ServHandler });
 		server.setHandler(handlers);
