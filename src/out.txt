@@ -1,0 +1,5 @@
+2017-07-19 17:46:22.332:INFO::jetty-7.4.5.v20110725
+2017-07-19 17:46:22.356:INFO::started o.e.j.s.h.ContextHandler{/admin,null}
+2017-07-19 17:46:22.356:INFO::started o.e.j.s.h.ContextHandler{/,null}
+2017-07-19 17:46:22.382:INFO::started o.e.j.s.ServletContextHandler{/,file:/root/AMFC/WebContent/}
+2017-07-19 17:46:22.416:INFO::Started SelectChannelConnector@0.0.0.0:8080 STARTING

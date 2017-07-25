@@ -35,10 +35,6 @@ public class ApplicantServlet extends HttpServlet {
 		if (task.equals("newPublicRegistration")) {
 			String jsonString = request.getParameter("applicant");
 			
-			BufferedWriter writer = new BufferedWriter(new FileWriter("1.txt", true));
-		    writer.write(jsonString + "\n\n\n");
-		    writer.close();
-			
 			Applicant newApplicant = gson.fromJson(jsonString, Applicant.class);
 			newApplicant.photo = request.getParameter("photo[base64]");
 			newApplicant.amfcPointOfContact = "self";
