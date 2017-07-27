@@ -108,10 +108,16 @@ public class ApplicantServlet extends HttpServlet {
 			
 			} else if (task.equals("requestApplicants")) {
 				Applicant[] allApplicants = MySQLBridge.msql.getApplicants("approved");
+				for(int i=0;i<allApplicants.length;i++){
+					allApplicants[i].photo="";
+				}
 				out.println("{\"applicants\":" + gson.toJson(allApplicants) + "}");
 			
 			} else if (task.equals("requestNewApplicants")) {
 				Applicant[] newApplicants = MySQLBridge.msql.getApplicants("pending");
+				for(int i=0;i<newApplicants.length;i++){
+					newApplicants[i].photo="";
+				}
 				out.println("{\"applicants\":" + gson.toJson(newApplicants) + "}");
 			
 			} else if (task.equals("selectApplicant")) {
@@ -142,6 +148,9 @@ public class ApplicantServlet extends HttpServlet {
 				int gender = Integer.parseInt(request.getParameter("gender"));
 				int userId = Integer.parseInt(request.getParameter("userId"));
 				Applicant[] candidates = MySQLBridge.msql.getCandidates(gender, userId);
+				for(int i=0;i<candidates.length;i++){
+					candidates[i].photo="";
+				}
 				out.println("{\"candidates\":" + gson.toJson(candidates) + "}");
 			
 			} else if (task.equals("updatePairingStatus")) {
